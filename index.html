@@ -2,9 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Suivi nutritif & musculaire</title>
+<title>Suivi nutritif & musculaire 3D</title>
 <style>
-/* -------------------- Styles généraux -------------------- */
+/* Styles identiques au code précédent */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
 body { background: #f4f6f8; color: #333; }
 header { background: #1e293b; color: white; padding: 20px; text-align: center; }
@@ -21,6 +21,7 @@ input { width: 120px; padding: 6px; }
 button#saveProfile { padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; }
 button#saveProfile:hover { background: #1d4ed8; }
 #profileSummary { margin-top: 25px; background: #f1f5f9; padding: 15px; border-radius: 8px; }
+canvas { width: 100%; height: 400px; display: block; margin-top: 15px; border-radius: 8px; background: #e5e7eb; }
 
 /* -------------------- Musculation -------------------- */
 .training-subtabs { display: flex; gap: 10px; margin-bottom: 15px; }
@@ -73,6 +74,7 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 <button id="saveProfile">Enregistrer</button>
 </div>
 <div id="profileSummary"></div>
+<canvas id="body3DCanvas"></canvas>
 </section>
 
 <!-- -------------------- Musculation -------------------- -->
@@ -95,6 +97,7 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 <div class="exercise-detail-panel" id="exerciseDetailPanel">
 <h3>Détails de l'exercice</h3>
 <p>Cliquez sur un exercice pour voir ses détails ici.</p>
+<canvas id="exercise3DCanvas" style="margin-top:15px; height:300px;"></canvas>
 </div>
 </div>
 </div>
@@ -127,7 +130,8 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
   </div>
 </div>
 </section>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+<script>
 <!-- -------------------- JS -------------------- -->
 <script>
 // -------------------- Onglets --------------------
@@ -335,7 +339,44 @@ function renderMealSummary(){
 
 filterType.addEventListener('change', renderFoods);
 renderFoods();
-
+// -------------------- 3D Profil --------------------
+let bodyScene, bodyCamera, bodyRenderer, bodyMesh;
+function renderBody3D(profile){
+  const canvas = document.getElementById('body3DCanvas');
+  bodyScene = new THREE.Scene();
+  bodyCamera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight,0.1,1000);
+  bodyRenderer = new THREE.WebGLRenderer({canvas,antialias:true});
+  bodyRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+  const light = new THREE.HemisphereLight(0xffffff,0x444444); light.position.set(0,20,0); bodyScene.add(light);
+  const material = new THREE.MeshStandardMaterial({color:0x00aaff});
+  bodyMesh = new THREE.Group();
+  const torso = new THREE.Mesh(new THREE.BoxGeometry(1,2,0.5),material);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.5,32,32),material); head.position.y=1.5;
+  const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,1.5),material); legL.position.set(-0.3,-1.75,0);
+  const legR = legL.clone(); legR.position.x=0.3;
+  const armL = new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,1),material); armL.position.set(-0.8,0.5,0);
+  const armR = armL.clone(); armR.position.x=0.8;
+  bodyMesh.add(torso, head, legL, legR, armL, armR);
+  bodyScene.add(bodyMesh);
+  bodyCamera.position.z=5;
+  function animate(){ requestAnimationFrame(animate); bodyMesh.rotation.y+=0.01; bodyRenderer.render(bodyScene,bodyCamera); }
+  animate();
+}
+// -------------------- 3D Exercices --------------------
+function renderExercise3D(name){
+  const canvas = document.getElementById('exercise3DCanvas');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight,0.1,1000);
+  const renderer = new THREE.WebGLRenderer({canvas,antialias:true});
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+  const light = new THREE.HemisphereLight(0xffffff,0x444444); light.position.set(0,20,0); scene.add(light);
+  const material = new THREE.MeshStandardMaterial({color:0xff5555});
+  const cube = new THREE.Mesh(new THREE.BoxGeometry(1,1,0.5), material); scene.add(cube);
+  camera.position.z=3;
+  let angle=0;
+  function animate(){ requestAnimationFrame(animate); cube.rotation.x=Math.sin(angle); cube.rotation.y=angle; angle+=0.02; renderer.render(scene,camera); }
+  animate();
+}
 </script>
 </body>
 </html>

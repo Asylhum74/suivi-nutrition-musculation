@@ -32,6 +32,11 @@ button#saveProfile:hover { background: #1d4ed8; }
 #exerciseDetail img { max-width: 100%; border-radius: 8px; margin-bottom: 10px; }
 #exerciseDetail h3 { margin-bottom: 10px; }
 #exerciseDetail p { margin-bottom: 8px; }
+#programForm { margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; }
+#programList { margin-top: 15px; list-style: none; padding-left: 0; }
+#programList li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
+button.addProgram { margin-top: 10px; padding: 8px 12px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; }
+button.addProgram:hover { background: #059669; }
 </style>
 </head>
 <body>
@@ -62,6 +67,11 @@ button#saveProfile:hover { background: #1d4ed8; }
 </div>
 <ul id="exerciseList" class="list"></ul>
 <div id="exerciseDetail"></div>
+<div id="programForm">
+<h3>Créer votre programme</h3>
+<ul id="programList"></ul>
+<button class="addProgram" id="saveProgram">Sauvegarder programme</button>
+</div>
 </section>
 <section id="nutrition" class="tab">
 <h2>Aliments</h2>
@@ -88,16 +98,16 @@ poidsInput.value = data.poids;
 renderProfile(data);
 }
 function renderProfile(data) {
-summary.innerHTML = `<p>Âge : <strong>${data.age}</strong> ans</p><p>Taille : <strong>${data.taille}</strong> cm</p><p>Poids : <strong>${data.poids}</strong> kg</p>`;
+summary.innerHTML=`<p>Âge : <strong>${data.age}</strong> ans</p><p>Taille : <strong>${data.taille}</strong> cm</p><p>Poids : <strong>${data.poids}</strong> kg</p>`;
 }
-document.getElementById('saveProfile').addEventListener('click', () => {
-const profile = { age: ageInput.value, taille: tailleInput.value, poids: poidsInput.value };
-localStorage.setItem('profile', JSON.stringify(profile));
+document.getElementById('saveProfile').addEventListener('click',()=>{
+const profile={age:ageInput.value,taille:tailleInput.value,poids:poidsInput.value};
+localStorage.setItem('profile',JSON.stringify(profile));
 renderProfile(profile);
 });
 loadProfile();
 
-const exercises = [
+const exercises=[
 {name:'Développé couché',muscle:'Pectoraux',goal:'Force / Hypertrophie',desc:'Allongez-vous sur le banc, prenez la barre, abaissez-la lentement sur votre poitrine et poussez.',img:'https://via.placeholder.com/300x150'},
 {name:'Squat',muscle:'Jambes',goal:'Force globale',desc:'Tenez la barre sur vos épaules, fléchissez les genoux jusqu’à 90°, puis remontez.',img:'https://via.placeholder.com/300x150'},
 {name:'Soulevé de terre',muscle:'Dos / Jambes',goal:'Force',desc:'Pieds à largeur d’épaules, saisissez la barre, dos droit, remontez en extension complète.',img:'https://via.placeholder.com/300x150'},
@@ -105,14 +115,17 @@ const exercises = [
 {name:'Développé militaire',muscle:'Épaules',goal:'Force',desc:'Debout, barre devant épaules, poussez vers le haut jusqu’à extension complète.',img:'https://via.placeholder.com/300x150'},
 {name:'Curl biceps',muscle:'Biceps',goal:'Isolation',desc:'Tenez les haltères, fléchissez les coudes et contractez les biceps.',img:'https://via.placeholder.com/300x150'}
 ];
-const exerciseList = document.getElementById('exerciseList');
-const filterMuscle = document.getElementById('filterMuscle');
-const filterGoal = document.getElementById('filterGoal');
-const exerciseDetail = document.getElementById('exerciseDetail');
-const muscles = [...new Set(exercises.map(e=>e.muscle))];
+const exerciseList=document.getElementById('exerciseList');
+const filterMuscle=document.getElementById('filterMuscle');
+const filterGoal=document.getElementById('filterGoal');
+const exerciseDetail=document.getElementById('exerciseDetail');
+const programList=document.getElementById('programList');
+const saveProgram=document.getElementById('saveProgram');
+const muscles=[...new Set(exercises.map(e=>e.muscle))];
 muscles.forEach(m=>filterMuscle.innerHTML+=`<option value='${m}'>${m}</option>`);
-const goals = [...new Set(exercises.map(e=>e.goal))];
+const goals=[...new Set(exercises.map(e=>e.goal))];
 goals.forEach(g=>filterGoal.innerHTML+=`<option value='${g}'>${g}</option>`);
+let selectedProgram=[];
 function renderExercises(){
 exerciseList.innerHTML='';
 const selectedMuscle=filterMuscle.value;
@@ -127,8 +140,20 @@ exerciseList.appendChild(li);
 }
 function showExerciseDetail(exo){
 exerciseDetail.style.display='block';
-exerciseDetail.innerHTML=`<h3>${exo.name}</h3><img src='${exo.img}' alt='${exo.name}'><p><strong>Muscle :</strong> ${exo.muscle}</p><p><strong>Objectif :</strong> ${exo.goal}</p><p><strong>Description :</strong> ${exo.desc}</p>`;
+exerciseDetail.innerHTML=`<h3>${exo.name}</h3><img src='${exo.img}' alt='${exo.name}'><p><strong>Muscle :</strong> ${exo.muscle}</p><p><strong>Objectif :</strong> ${exo.goal}</p><p><strong>Description :</strong> ${exo.desc}</p><button class='addProgram' onclick='addToProgram("${exo.name}")'>Ajouter au programme</button>`;
 }
+function addToProgram(name){
+if(!selectedProgram.includes(name)){
+selectedProgram.push(name);
+const li=document.createElement('li');
+li.textContent=name;
+programList.appendChild(li);
+}
+}
+saveProgram.addEventListener('click',()=>{
+localStorage.setItem('myProgram',JSON.stringify(selectedProgram));
+alert('Programme sauvegardé !');
+});
 filterMuscle.addEventListener('change',renderExercises);
 filterGoal.addEventListener('change',renderExercises);
 renderExercises();

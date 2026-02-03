@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Suivi nutritif & musculaire</title>
 <style>
-/* RESET SIMPLE */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
 body { background: #f4f6f8; color: #333; }
 header { background: #1e293b; color: white; padding: 20px; text-align: center; }
@@ -34,9 +33,12 @@ button#saveProfile:hover { background: #1d4ed8; }
 #exerciseDetail p { margin-bottom: 8px; }
 #programForm { margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; }
 #programList { margin-top: 15px; list-style: none; padding-left: 0; }
-#programList li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
+#programList li { background: white; margin-bottom: 8px; padding: 10px; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.06); display: flex; justify-content: space-between; align-items: center; }
+input.repInput { width: 50px; margin-left: 5px; }
 button.addProgram { margin-top: 10px; padding: 8px 12px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; }
 button.addProgram:hover { background: #059669; }
+button.removeExo { padding: 4px 8px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; }
+button.removeExo:hover { background: #b91c1c; }
 </style>
 </head>
 <body>
@@ -85,6 +87,7 @@ document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'))
 document.getElementById(btn.dataset.tab).classList.add('active');
 });
 });
+
 const ageInput = document.getElementById('age');
 const tailleInput = document.getElementById('taille');
 const poidsInput = document.getElementById('poids');
@@ -115,6 +118,7 @@ const exercises=[
 {name:'Développé militaire',muscle:'Épaules',goal:'Force',desc:'Debout, barre devant épaules, poussez vers le haut jusqu’à extension complète.',img:'https://via.placeholder.com/300x150'},
 {name:'Curl biceps',muscle:'Biceps',goal:'Isolation',desc:'Tenez les haltères, fléchissez les coudes et contractez les biceps.',img:'https://via.placeholder.com/300x150'}
 ];
+
 const exerciseList=document.getElementById('exerciseList');
 const filterMuscle=document.getElementById('filterMuscle');
 const filterGoal=document.getElementById('filterGoal');
@@ -125,17 +129,22 @@ const muscles=[...new Set(exercises.map(e=>e.muscle))];
 muscles.forEach(m=>filterMuscle.innerHTML+=`<option value='${m}'>${m}</option>`);
 const goals=[...new Set(exercises.map(e=>e.goal))];
 goals.forEach(g=>filterGoal.innerHTML+=`<option value='${g}'>${g}</option>`);
+
 let selectedProgram=[];
 
-// Charger le programme sauvegardé au démarrage
+// Charger le programme sauvegardé
 function loadProgram() {
 const saved=JSON.parse(localStorage.getItem('myProgram'));
 if(!saved) return;
 selectedProgram=saved;
 programList.innerHTML='';
-selectedProgram.forEach(name=>{
+selectedProgram.forEach(item=>{
 const li=document.createElement('li');
-li.textContent=name;
+li.innerHTML=`${item.name} - Séries: <input type='number' class='repInput' value='${item.sets}'> Reps: <input type='number' class='repInput' value='${item.reps}'><button class='removeExo'>Supprimer</button>`;
+li.querySelector('.removeExo').addEventListener('click',()=>{
+selectedProgram=selectedProgram.filter(e=>e!==item);
+li.remove();
+});
 programList.appendChild(li);
 });
 }
@@ -153,22 +162,35 @@ li.addEventListener('click',()=>showExerciseDetail(exo));
 exerciseList.appendChild(li);
 });
 }
+
 function showExerciseDetail(exo){
 exerciseDetail.style.display='block';
 exerciseDetail.innerHTML=`<h3>${exo.name}</h3><img src='${exo.img}' alt='${exo.name}'><p><strong>Muscle :</strong> ${exo.muscle}</p><p><strong>Objectif :</strong> ${exo.goal}</p><p><strong>Description :</strong> ${exo.desc}</p><button class='addProgram' onclick='addToProgram("${exo.name}")'>Ajouter au programme</button>`;
 }
+
 function addToProgram(name){
-if(!selectedProgram.includes(name)){
-selectedProgram.push(name);
+if(!selectedProgram.find(e=>e.name===name)){
+selectedProgram.push({name, sets:3, reps:10}); // valeurs par défaut
 const li=document.createElement('li');
-li.textContent=name;
+li.innerHTML=`${name} - Séries: <input type='number' class='repInput' value='3'> Reps: <input type='number' class='repInput' value='10'><button class='removeExo'>Supprimer</button>`;
+li.querySelector('.removeExo').addEventListener('click',()=>{
+selectedProgram=selectedProgram.filter(e=>e.name!==name);
+li.remove();
+});
 programList.appendChild(li);
 }
 }
+
 saveProgram.addEventListener('click',()=>{
+// Met à jour les valeurs de sets/reps avant de sauvegarder
+document.querySelectorAll('#programList li').forEach((li,i)=>{
+selectedProgram[i].sets=parseInt(li.querySelectorAll('input')[0].value);
+selectedProgram[i].reps=parseInt(li.querySelectorAll('input')[1].value);
+});
 localStorage.setItem('myProgram',JSON.stringify(selectedProgram));
 alert('Programme sauvegardé !');
 });
+
 filterMuscle.addEventListener('change',renderExercises);
 filterGoal.addEventListener('change',renderExercises);
 renderExercises();

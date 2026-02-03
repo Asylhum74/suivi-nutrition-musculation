@@ -130,8 +130,11 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
   </div>
 </div>
 </section>
-<script type ="module" src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
-<script>
+<!--<script type ="module" src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>-->
+
+<script type="module">
+  // Importer THREE depuis le module
+  import * as THREE from 'three.module.js';
 // -------------------- Onglets --------------------
 document.querySelectorAll('.tabs button').forEach(btn => {
   btn.addEventListener('click', () => {

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Suivi nutritif & musculaire</title>
 <style>
-/* Styles généraux */
+/* -------------------- Styles généraux -------------------- */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
 body { background: #f4f6f8; color: #333; }
 header { background: #1e293b; color: white; padding: 20px; text-align: center; }
@@ -22,14 +22,13 @@ button#saveProfile { padding: 10px; background: #2563eb; color: white; border: n
 button#saveProfile:hover { background: #1d4ed8; }
 #profileSummary { margin-top: 25px; background: #f1f5f9; padding: 15px; border-radius: 8px; }
 
-/* Sous-onglets musculation */
+/* -------------------- Musculation -------------------- */
 .training-subtabs { display: flex; gap: 10px; margin-bottom: 15px; }
 .training-subtabs button { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; background: #cbd5f5; color: #0f172a; }
 .training-subtabs button.active { background: #2563eb; color: white; }
 .subtab { display: none; }
 .subtab.active { display: block; }
 
-/* Exercices */
 .training-container { display: flex; gap: 20px; }
 .exercises-panel, .exercise-detail-panel { background: white; border-radius: 10px; padding: 15px; flex: 1; max-height: 600px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,0.08); }
 .exercises-panel h3, .exercise-detail-panel h3 { margin-bottom: 15px; color: #1e293b; }
@@ -37,7 +36,6 @@ button#saveProfile:hover { background: #1d4ed8; }
 .card { padding: 12px; border-radius: 8px; background: #f8fafc; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.06); transition: background 0.2s; }
 .card:hover { background: #e0f2fe; }
 
-/* Programme */
 .program-panel { background: white; border-radius: 10px; padding: 15px; max-height: 600px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,0.08); }
 .program-panel h3 { margin-bottom: 15px; color: #1e293b; }
 .program-item { display: flex; flex-direction: column; gap: 6px; background: #f1f5f9; padding: 10px; border-radius: 8px; }
@@ -47,19 +45,25 @@ button#saveProfile:hover { background: #1d4ed8; }
 .program-item button.removeExo:hover { background: #b91c1c; }
 button.addProgram, #saveProgram { margin-top: 10px; padding: 8px 12px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; }
 button.addProgram:hover, #saveProgram:hover { background: #059669; }
+
+/* -------------------- Nutrition -------------------- */
+.food-panel, .meal-panel { background: white; border-radius: 10px; padding: 15px; max-height:600px; overflow-y:auto; box-shadow:0 8px 16px rgba(0,0,0,0.08); }
+.food-panel h3, .meal-panel h3 { margin-bottom: 15px; color: #1e293b; }
 </style>
 </head>
 <body>
 <header>
 <h1>Suivi nutritif & musculaire</h1>
 </header>
+
 <nav class="tabs">
 <button data-tab="dashboard">Profil</button>
 <button data-tab="training">Musculation</button>
 <button data-tab="nutrition">Nutrition</button>
 </nav>
+
 <main>
-<!-- Profil -->
+<!-- -------------------- Profil -------------------- -->
 <section id="dashboard" class="tab active">
 <h2>Profil utilisateur</h2>
 <div class="form">
@@ -71,7 +75,7 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 <div id="profileSummary"></div>
 </section>
 
-<!-- Musculation -->
+<!-- -------------------- Musculation -------------------- -->
 <section id="training" class="tab">
 <div class="training-subtabs">
 <button data-subtab="exercises" class="active">Exercices</button>
@@ -104,14 +108,29 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 </div>
 </section>
 
-<!-- Nutrition -->
+<!-- -------------------- Nutrition -------------------- -->
 <section id="nutrition" class="tab">
-<h2>Aliments</h2>
-<ul id="foodList" class="list"></ul>
+<h2>Nutrition</h2>
+<div class="nutrition-container" style="display:flex; gap:20px;">
+  <div class="food-panel" style="flex:1;">
+    <h3>Aliments</h3>
+    <label>Filtrer par type :
+      <select id="filterType"><option value="all">Tous</option></select>
+    </label>
+    <ul id="foodList" class="list"></ul>
+  </div>
+  <div class="meal-panel" style="flex:1;">
+    <h3>Repas</h3>
+    <ul id="mealList" class="list"></ul>
+    <p><strong>Total nutritionnel :</strong></p>
+    <div id="mealSummary"></div>
+  </div>
+</div>
 </section>
 
+<!-- -------------------- JS -------------------- -->
 <script>
-// Onglets principaux
+// -------------------- Onglets --------------------
 document.querySelectorAll('.tabs button').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -119,24 +138,22 @@ document.querySelectorAll('.tabs button').forEach(btn => {
   });
 });
 
-// Sous-onglets Musculation
+// -------------------- Sous-onglets Musculation --------------------
 const subtabButtons = document.querySelectorAll('.training-subtabs button');
 subtabButtons.forEach(btn => {
   btn.addEventListener('click', () => {
     subtabButtons.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
     document.querySelectorAll('.subtab').forEach(st => st.classList.remove('active'));
     document.getElementById(btn.dataset.subtab+'Tab').classList.add('active');
   });
 });
 
-// Profil
+// -------------------- Profil --------------------
 const ageInput = document.getElementById('age');
 const tailleInput = document.getElementById('taille');
 const poidsInput = document.getElementById('poids');
 const summary = document.getElementById('profileSummary');
-
 function loadProfile() {
   const data = JSON.parse(localStorage.getItem('profile'));
   if (!data) return;
@@ -145,22 +162,20 @@ function loadProfile() {
   poidsInput.value = data.poids;
   renderProfile(data);
 }
-
 function renderProfile(data) {
   summary.innerHTML = `<p>Âge : <strong>${data.age}</strong> ans</p>
                        <p>Taille : <strong>${data.taille}</strong> cm</p>
                        <p>Poids : <strong>${data.poids}</strong> kg</p>`;
 }
-
-document.getElementById('saveProfile').addEventListener('click', () => {
-  const profile = {age: ageInput.value, taille: tailleInput.value, poids: poidsInput.value};
-  localStorage.setItem('profile', JSON.stringify(profile));
+document.getElementById('saveProfile').addEventListener('click', ()=>{
+  const profile={age:ageInput.value,taille:tailleInput.value,poids:poidsInput.value};
+  localStorage.setItem('profile',JSON.stringify(profile));
   renderProfile(profile);
 });
 loadProfile();
 
-// Exercices
-const exercises = [
+// -------------------- Musculation --------------------
+const exercises=[
   {name:'Développé couché',muscle:'Pectoraux',goal:'Force / Hypertrophie',desc:'Allongez-vous sur le banc, prenez la barre, abaissez-la lentement sur votre poitrine et poussez.'},
   {name:'Squat',muscle:'Jambes',goal:'Force globale',desc:'Tenez la barre sur vos épaules, fléchissez les genoux jusqu’à 90°, puis remontez.'},
   {name:'Soulevé de terre',muscle:'Dos / Jambes',goal:'Force',desc:'Pieds à largeur d’épaules, saisissez la barre, dos droit, remontez en extension complète.'},
@@ -169,31 +184,30 @@ const exercises = [
   {name:'Curl biceps',muscle:'Biceps',goal:'Isolation',desc:'Tenez les haltères, fléchissez les coudes et contractez les biceps.'}
 ];
 
-const exerciseList = document.getElementById('exerciseList');
-const filterMuscle = document.getElementById('filterMuscle');
-const filterGoal = document.getElementById('filterGoal');
-const exerciseDetailPanel = document.getElementById('exerciseDetailPanel');
-const programList = document.getElementById('programList');
-const saveProgram = document.getElementById('saveProgram');
+const exerciseList=document.getElementById('exerciseList');
+const filterMuscle=document.getElementById('filterMuscle');
+const filterGoal=document.getElementById('filterGoal');
+const exerciseDetailPanel=document.getElementById('exerciseDetailPanel');
+const programList=document.getElementById('programList');
+const saveProgram=document.getElementById('saveProgram');
 
-const muscles = [...new Set(exercises.map(e=>e.muscle))];
-muscles.forEach(m => filterMuscle.innerHTML += `<option value="${m}">${m}</option>`);
-const goals = [...new Set(exercises.map(e=>e.goal))];
-goals.forEach(g => filterGoal.innerHTML += `<option value="${g}">${g}</option>`);
+const muscles=[...new Set(exercises.map(e=>e.muscle))];
+muscles.forEach(m=>filterMuscle.innerHTML+=`<option value='${m}'>${m}</option>`);
+const goals=[...new Set(exercises.map(e=>e.goal))];
+goals.forEach(g=>filterGoal.innerHTML+=`<option value='${g}'>${g}</option>`);
 
-let selectedProgram = [];
-
+let selectedProgram=[];
 function loadProgram() {
-  const saved = JSON.parse(localStorage.getItem('myProgram'));
-  if (!saved) return;
-  selectedProgram = saved;
-  programList.innerHTML = '';
-  selectedProgram.forEach(item => {
-    const li = document.createElement('li');
+  const saved=JSON.parse(localStorage.getItem('myProgram'));
+  if(!saved) return;
+  selectedProgram=saved;
+  programList.innerHTML='';
+  selectedProgram.forEach(item=>{
+    const li=document.createElement('li');
     li.classList.add('program-item');
-    li.innerHTML = `<span>${item.name}</span> Séries: <input type="number" value="${item.sets}"> Reps: <input type="number" value="${item.reps}"><button class="removeExo">Supprimer</button>`;
-    li.querySelector('.removeExo').addEventListener('click', () => {
-      selectedProgram = selectedProgram.filter(e => e !== item);
+    li.innerHTML=`<span>${item.name}</span> Séries: <input type='number' value='${item.sets}'> Reps: <input type='number' value='${item.reps}'><button class='removeExo'>Supprimer</button>`;
+    li.querySelector('.removeExo').addEventListener('click',()=>{
+      selectedProgram=selectedProgram.filter(e=>e!==item);
       li.remove();
     });
     programList.appendChild(li);
@@ -201,57 +215,127 @@ function loadProgram() {
 }
 loadProgram();
 
-function renderExercises() {
-  exerciseList.innerHTML = '';
-  const selMuscle = filterMuscle.value;
-  const selGoal = filterGoal.value;
-  exercises.filter(e => (selMuscle==='all'||e.muscle===selMuscle) && (selGoal==='all'||e.goal===selGoal))
-           .forEach(exo => {
-    const li = document.createElement('li');
+function renderExercises(){
+  exerciseList.innerHTML='';
+  const selMuscle=filterMuscle.value;
+  const selGoal=filterGoal.value;
+  exercises.filter(e=>(selMuscle==='all'||e.muscle===selMuscle)&&(selGoal==='all'||e.goal===selGoal))
+           .forEach(exo=>{
+    const li=document.createElement('li');
     li.classList.add('card');
-    li.innerHTML = `<strong>${exo.name}</strong><br><small>${exo.muscle} — ${exo.goal}</small>`;
-    li.addEventListener('click', ()=>showExerciseDetail(exo));
+    li.innerHTML=`<strong>${exo.name}</strong><br><small>${exo.muscle} — ${exo.goal}</small>`;
+    li.addEventListener('click',()=>showExerciseDetail(exo));
     exerciseList.appendChild(li);
   });
 }
 
-function showExerciseDetail(exo) {
+function showExerciseDetail(exo){
   exerciseDetailPanel.innerHTML = `
     <h3>${exo.name}</h3>
     <p><strong>Muscle :</strong> ${exo.muscle}</p>
     <p><strong>Objectif :</strong> ${exo.goal}</p>
     <p>${exo.desc}</p>
-    <button class="addProgram">Ajouter au programme</button>
+    <button class='addProgram'>Ajouter au programme</button>
   `;
-  exerciseDetailPanel.querySelector('.addProgram').addEventListener('click', ()=>addToProgram(exo.name));
+  exerciseDetailPanel.querySelector('.addProgram').addEventListener('click', ()=> addToProgram(exo.name));
 }
 
-function addToProgram(name) {
-  if (!selectedProgram.find(e=>e.name===name)) {
+function addToProgram(name){
+  if(!selectedProgram.find(e=>e.name===name)){
     selectedProgram.push({name, sets:3, reps:10});
-    const li = document.createElement('li');
+    const li=document.createElement('li');
     li.classList.add('program-item');
-    li.innerHTML = `<span>${name}</span> Séries: <input type="number" value="3"> Reps: <input type="number" value="10"><button class="removeExo">Supprimer</button>`;
-    li.querySelector('.removeExo').addEventListener('click', ()=>{
-      selectedProgram = selectedProgram.filter(e=>e.name!==name);
+    li.innerHTML=`<span>${name}</span> Séries: <input type='number' value='3'> Reps: <input type='number' value='10'><button class='removeExo'>Supprimer</button>`;
+    li.querySelector('.removeExo').addEventListener('click',()=>{
+      selectedProgram=selectedProgram.filter(e=>e.name!==name);
       li.remove();
     });
     programList.appendChild(li);
   }
 }
 
-saveProgram.addEventListener('click', ()=>{
+saveProgram.addEventListener('click',()=>{
   document.querySelectorAll('#programList li').forEach((li,i)=>{
-    selectedProgram[i].sets = parseInt(li.querySelectorAll('input')[0].value);
-    selectedProgram[i].reps = parseInt(li.querySelectorAll('input')[1].value);
+    selectedProgram[i].sets=parseInt(li.querySelectorAll('input')[0].value);
+    selectedProgram[i].reps=parseInt(li.querySelectorAll('input')[1].value);
   });
-  localStorage.setItem('myProgram', JSON.stringify(selectedProgram));
+  localStorage.setItem('myProgram',JSON.stringify(selectedProgram));
   alert('Programme sauvegardé !');
 });
 
-filterMuscle.addEventListener('change', renderExercises);
-filterGoal.addEventListener('change', renderExercises);
+filterMuscle.addEventListener('change',renderExercises);
+filterGoal.addEventListener('change',renderExercises);
 renderExercises();
+
+// -------------------- Nutrition --------------------
+const foods=[
+  {name:'Pomme',type:'Fruit',cal:52,prot:0.3,lip:0.2,gluc:14},
+  {name:'Banane',type:'Fruit',cal:89,prot:1.1,lip:0.3,gluc:23},
+  {name:'Poulet',type:'Viande',cal:165,prot:31,lip:3.6,gluc:0},
+  {name:'Saumon',type:'Poisson',cal:208,prot:20,lip:13,gluc:0},
+  {name:'Riz',type:'Féculent',cal:130,prot:2.4,lip:0.3,gluc:28},
+  {name:'Brocoli',type:'Légume',cal:34,prot:2.8,lip:0.4,gluc:7}
+];
+
+const foodList=document.getElementById('foodList');
+const filterType=document.getElementById('filterType');
+const mealList=document.getElementById('mealList');
+const mealSummary=document.getElementById('mealSummary');
+
+const types=[...new Set(foods.map(f=>f.type))];
+types.forEach(t=>filterType.innerHTML+=`<option value="${t}">${t}</option>`);
+
+let currentMeal=[];
+function renderFoods(){
+  foodList.innerHTML='';
+  const typeFilter=filterType.value;
+  foods.filter(f=>typeFilter==='all'||f.type===typeFilter).forEach(f=>{
+    const li=document.createElement('li');
+    li.classList.add('card');
+    li.innerHTML=`<strong>${f.name}</strong> (${f.type}) - ${f.cal} kcal <button class="addFood">Ajouter</button>`;
+    li.querySelector('.addFood').addEventListener('click',()=>addFoodToMeal(f));
+    foodList.appendChild(li);
+  });
+}
+
+function addFoodToMeal(food){
+  const existing=currentMeal.find(f=>f.name===food.name);
+  if(existing){ existing.qty+=100; } else { currentMeal.push({...food, qty:100}); }
+  renderMeal();
+}
+
+function renderMeal(){
+  mealList.innerHTML='';
+  currentMeal.forEach((f,i)=>{
+    const li=document.createElement('li');
+    li.classList.add('program-item');
+    li.innerHTML=`<span>${f.name}</span> Quantité (g): <input type="number" value="${f.qty}"> 
+                  <button class="removeFood">Supprimer</button>`;
+    li.querySelector('input').addEventListener('input', e=>{ f.qty=parseInt(e.target.value); renderMealSummary(); });
+    li.querySelector('.removeFood').addEventListener('click',()=>{ currentMeal.splice(i,1); renderMeal(); });
+    mealList.appendChild(li);
+  });
+  renderMealSummary();
+}
+
+function renderMealSummary(){
+  let totalCal=0,totalProt=0,totalLip=0,totalGluc=0;
+  currentMeal.forEach(f=>{
+    const factor=f.qty/100;
+    totalCal+=f.cal*factor;
+    totalProt+=f.prot*factor;
+    totalLip+=f.lip*factor;
+    totalGluc+=f.gluc*factor;
+  });
+  mealSummary.innerHTML=`<p>Calories: ${totalCal.toFixed(1)} kcal</p>
+                         <p>Protéines: ${totalProt.toFixed(1)} g</p>
+                         <p>Lipides: ${totalLip.toFixed(1)} g</p>
+                         <p>Glucides: ${totalGluc.toFixed(1)} g</p>`;
+}
+
+filterType.addEventListener('change', renderFoods);
+renderFoods();
+
 </script>
 </body>
 </html>

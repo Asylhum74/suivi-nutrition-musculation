@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Suivi nutritif & musculaire</title>
 <style>
-/* CSS identique à celui que tu avais, pour les onglets et panels */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
 body { background: #f4f6f8; color: #333; }
 header { background: #1e293b; color: white; padding: 20px; text-align: center; }
@@ -36,7 +35,6 @@ button#saveProfile:hover { background: #1d4ed8; }
 .list { list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: 12px; }
 .card { padding: 12px; border-radius: 8px; background: #f8fafc; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.06); transition: background 0.2s; }
 .card:hover { background: #e0f2fe; }
-.exercise-detail-panel img { max-width: 100%; border-radius: 8px; margin-bottom: 10px; }
 
 /* Programme */
 .program-panel { background: white; border-radius: 10px; padding: 15px; max-height: 600px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,0.08); }
@@ -90,6 +88,7 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 <div class="exercise-detail-panel" id="exerciseDetailPanel">
 <h3>Détails de l'exercice</h3>
 <p>Cliquez sur un exercice pour voir ses détails ici.</p>
+<div id="exercise3D" style="width:100%; height:300px;"></div>
 </div>
 </div>
 </div>
@@ -108,12 +107,12 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 <ul id="foodList" class="list"></ul>
 </section>
 
-<!-- Three.js classique (UMD) -->
+<!-- Three.js classique UMD -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
-// Onglets principaux
+// --- Onglets principaux ---
 document.querySelectorAll('.tabs button').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -121,7 +120,7 @@ document.querySelectorAll('.tabs button').forEach(btn => {
   });
 });
 
-// Sous-onglets musculation
+// --- Sous-onglets Musculation ---
 const subtabButtons = document.querySelectorAll('.training-subtabs button');
 subtabButtons.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -133,7 +132,7 @@ subtabButtons.forEach(btn => {
   });
 });
 
-// Profil
+// --- Profil ---
 const ageInput = document.getElementById('age');
 const tailleInput = document.getElementById('taille');
 const poidsInput = document.getElementById('poids');
@@ -156,14 +155,14 @@ document.getElementById('saveProfile').addEventListener('click',()=>{
 });
 loadProfile();
 
-// Exercices
+// --- Exercices ---
 const exercises=[
-  {name:'Développé couché',muscle:'Pectoraux',goal:'Force / Hypertrophie',desc:'Allongez-vous sur le banc, prenez la barre, abaissez-la lentement sur votre poitrine et poussez.',img:'https://via.placeholder.com/300x150'},
-  {name:'Squat',muscle:'Jambes',goal:'Force globale',desc:'Tenez la barre sur vos épaules, fléchissez les genoux jusqu’à 90°, puis remontez.',img:'https://via.placeholder.com/300x150'},
-  {name:'Soulevé de terre',muscle:'Dos / Jambes',goal:'Force',desc:'Pieds à largeur d’épaules, saisissez la barre, dos droit, remontez en extension complète.',img:'https://via.placeholder.com/300x150'},
-  {name:'Tractions',muscle:'Dos',goal:'Hypertrophie',desc:'Suspendez-vous à la barre, tirez le menton au-dessus, redescendez lentement.',img:'https://via.placeholder.com/300x150'},
-  {name:'Développé militaire',muscle:'Épaules',goal:'Force',desc:'Debout, barre devant épaules, poussez vers le haut jusqu’à extension complète.',img:'https://via.placeholder.com/300x150'},
-  {name:'Curl biceps',muscle:'Biceps',goal:'Isolation',desc:'Tenez les haltères, fléchissez les coudes et contractez les biceps.',img:'https://via.placeholder.com/300x150'}
+  {name:'Développé couché',muscle:'Pectoraux',goal:'Force / Hypertrophie',desc:'Allongez-vous sur le banc, prenez la barre, abaissez-la lentement sur votre poitrine et poussez.',img:''},
+  {name:'Squat',muscle:'Jambes',goal:'Force globale',desc:'Tenez la barre sur vos épaules, fléchissez les genoux jusqu’à 90°, puis remontez.',img:''},
+  {name:'Soulevé de terre',muscle:'Dos / Jambes',goal:'Force',desc:'Pieds à largeur d’épaules, saisissez la barre, dos droit, remontez en extension complète.',img:''},
+  {name:'Tractions',muscle:'Dos',goal:'Hypertrophie',desc:'Suspendez-vous à la barre, tirez le menton au-dessus, redescendez lentement.',img:''},
+  {name:'Développé militaire',muscle:'Épaules',goal:'Force',desc:'Debout, barre devant épaules, poussez vers le haut jusqu’à extension complète.',img:''},
+  {name:'Curl biceps',muscle:'Biceps',goal:'Isolation',desc:'Tenez les haltères, fléchissez les coudes et contractez les biceps.',img:''}
 ];
 
 const exerciseList=document.getElementById('exerciseList');
@@ -250,7 +249,7 @@ filterMuscle.addEventListener('change',renderExercises);
 filterGoal.addEventListener('change',renderExercises);
 renderExercises();
 
-// --- Three.js 3D Model ---
+// --- Three.js 3D Model (UMD) ---
 function init3DModel(){
   const container = document.getElementById('exercise3D');
   container.innerHTML = '';
@@ -276,7 +275,8 @@ function init3DModel(){
   dirLight.position.set(5,10,7.5);
   scene.add(dirLight);
 
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  // --- CORRECTION OrbitControls ---
+  const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
 
   function animate(){

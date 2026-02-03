@@ -171,6 +171,7 @@ function renderProfile(data) {
   summary.innerHTML = `<p>Âge : <strong>${data.age}</strong> ans</p>
                        <p>Taille : <strong>${data.taille}</strong> cm</p>
                        <p>Poids : <strong>${data.poids}</strong> kg</p>`;
+renderBody3D(data);
 }
 document.getElementById('saveProfile').addEventListener('click', ()=>{
   const profile={age:ageInput.value,taille:tailleInput.value,poids:poidsInput.value};
@@ -340,54 +341,8 @@ function renderMealSummary(){
 
 filterType.addEventListener('change', renderFoods);
 renderFoods();
-  
-const canvas = document.getElementById('body3DCanvas');
-
-// synchro canvas
-canvas.width = canvas.clientWidth;
-canvas.height = canvas.clientHeight;
-
-// scene
-const scene = new THREE.Scene();
-
-// camera (CRITIQUE)
-const camera = new THREE.PerspectiveCamera(
-  45,
-  canvas.width / canvas.height,
-  0.1,
-  1000
-);
-camera.position.set(0, 0, 6);
-camera.lookAt(0, 0, 0);
-
-// renderer
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setSize(canvas.width, canvas.height, false);
-renderer.setPixelRatio(window.devicePixelRatio);
-renderer.setClearColor(0xffffff, 1);
-
-// lumière
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(5, 10, 5);
-scene.add(light);
-
-// objet SIMPLE
-const cube = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshStandardMaterial({ color: 0x00aaff })
-);
-scene.add(cube);
-
-// render
-function animate() {
-  requestAnimationFrame(animate);
-  cube.rotation.y += 0.01;
-  renderer.render(scene, camera);
-}
-
-animate();
 // -------------------- 3D Profil --------------------
-/*let bodyScene, bodyCamera, bodyRenderer, bodyMesh;
+let bodyScene, bodyCamera, bodyRenderer, bodyMesh;
 function renderBody3D(profile){
   const canvas = document.getElementById('body3DCanvas');
   canvas.width = canvas.clientWidth;
@@ -440,7 +395,7 @@ function renderExercise3D(name){
   let angle=0;
   function animate(){ requestAnimationFrame(animate); cube.rotation.x=Math.sin(angle); cube.rotation.y=angle; angle+=0.02; renderer.render(scene,camera); }
   animate();
-}*/
+}
 </script>
 </body>
 </html>

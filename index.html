@@ -1,1 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Suivi nutritif & musculaire</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Suivi nutritif & musculaire</h1>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="dashboard">Profil</button>
+    <button data-tab="training">Musculation</button>
+    <button data-tab="nutrition">Nutrition</button>
+  </nav>
+
+  <main>
+    <!-- PROFIL -->
+    <section id="dashboard" class="tab active">
+      <h2>Profil utilisateur</h2>
+      <div class="form">
+        <label>Âge <input type="number" id="age"></label>
+        <label>Taille (cm) <input type="number" id="taille"></label>
+        <label>Poids (kg) <input type="number" id="poids"></label>
+        <button id="saveProfile">Enregistrer</button>
+      </div>
+      <div id="profileSummary"></div>
+    </section>
+
+    <!-- MUSCULATION -->
+    <section id="training" class="tab">
+      <h2>Exercices</h2>
+      <ul id="exerciseList"></ul>
+    </section>
+
+    <!-- NUTRITION -->
+    <section id="nutrition" class="tab">
+      <h2>Aliments</h2>
+      <ul id="foodList"></ul>
+    </section>
+  </main>
+
+  <script>
+// === Onglets ===
+document.querySelectorAll('.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+// === Profil utilisateur ===
+const ageInput = document.getElementById('age');
+const tailleInput = document.getElementById('taille');
+const poidsInput = document.getElementById('poids');
+const summary = document.getElementById('profileSummary');
+
+function loadProfile() {
+  const data = JSON.parse(localStorage.getItem('profile'));
+  if (!data) return;
+  ageInput.value = data.age;
+  tailleInput.value = data.taille;
+  poidsInput.value = data.poids;
+  renderProfile(data);
+}
+
+function renderProfile(data) {
+  summary.innerHTML = `
+    <p>Âge : <strong>${data.age}</strong> ans</p>
+    <p>Taille : <strong>${data.taille}</strong> cm</p>
+    <p>Poids : <strong>${data.poids}</strong> kg</p>
+  `;
+}
+
+document.getElementById('saveProfile').addEventListener('click', () => {
+  const profile = {
+    age: ageInput.value,
+    taille: tailleInput.value,
+    poids: poidsInput.value
+  };
+  localStorage.setItem('profile', JSON.stringify(profile));
+  renderProfile(profile);
+});
+
+loadProfile();
+</script>
+</body>
+</html>
 

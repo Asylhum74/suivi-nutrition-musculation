@@ -6,176 +6,68 @@
   <style>
 /* === RESET SIMPLE === */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-
-body {
-  background: #f4f6f8;
-  color: #333;
-}
-
-header {
-  background: #1e293b;
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
+body { background: #f4f6f8; color: #333; }
+header { background: #1e293b; color: white; padding: 20px; text-align: center; }
 /* === ONGLET NAV === */
-.tabs {
-  display: flex;
-  justify-content: center;
-  background: #0f172a;
-}
-
-.tabs button {
-  flex: 1;
-  padding: 15px;
-  border: none;
-  background: transparent;
-  color: #cbd5f5;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.tabs button:hover {
-  background: #1e293b;
-}
-
-/* === CONTENU === */
-main {
-  max-width: 900px;
-  margin: 30px auto;
-  padding: 20px;
-}
-
-.tab {
-  display: none;
-  background: white;
-  padding: 25px;
-  border-radius: 10px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-}
-
-.tab.active {
-  display: block;
-}
-
-h2 {
-  margin-bottom: 20px;
-  color: #1e293b;
-}
-
-/* === FORMULAIRE === */
-.form {
-  display: grid;
-  gap: 15px;
-  max-width: 400px;
-}
-
-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-input {
-  width: 120px;
-  padding: 6px;
-}
-
-button#saveProfile {
-  padding: 10px;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-button#saveProfile:hover {
-  background: #1d4ed8;
-}
-
-#profileSummary {
-  margin-top: 25px;
-  background: #f1f5f9;
-  padding: 15px;
-  border-radius: 8px;
-}
-
-/* === LISTES (EXERCICES / ALIMENTS) === */
-.list {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card strong {
-  color: #0f172a;
-  font-size: 16px;
-}
-
-.card small {
-  display: block;
-  margin-top: 6px;
-  color: #475569;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 24px rgba(0,0,0,0.12);
-}
+.tabs { display: flex; justify-content: center; background: #0f172a; }
+.tabs button { flex: 1; padding: 15px; border: none; background: transparent; color: #cbd5f5; cursor: pointer; font-size: 16px; }
+.tabs button:hover { background: #1e293b; }
+main { max-width: 900px; margin: 30px auto; padding: 20px; }
+.tab { display: none; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+.tab.active { display: block; }
+h2 { margin-bottom: 20px; color: #1e293b; }
+.form { display: grid; gap: 15px; max-width: 400px; }
+label { display: flex; justify-content: space-between; align-items: center; }
+input { width: 120px; padding: 6px; }
+button#saveProfile { padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; }
+button#saveProfile:hover { background: #1d4ed8; }
+#profileSummary { margin-top: 25px; background: #f1f5f9; padding: 15px; border-radius: 8px; }
+.list { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 20px; }
+.card { background: #ffffff; border-radius: 12px; padding: 16px; box-shadow: 0 8px 16px rgba(0,0,0,0.08); transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer; }
+.card strong { color: #0f172a; font-size: 16px; }
+.card small { display: block; margin-top: 6px; color: #475569; }
+.card:hover { transform: translateY(-4px); box-shadow: 0 14px 24px rgba(0,0,0,0.12); }
+.filter { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.filter select { padding: 6px; border-radius: 6px; border: 1px solid #cbd5f5; }
+#exerciseDetail { margin-top: 20px; background: #f1f5f9; padding: 15px; border-radius: 8px; display: none; }
 </style>
 </head>
 <body>
-  <header>
-    <h1>Suivi nutritif & musculaire</h1>
-  </header>
-
-  <nav class="tabs">
-    <button data-tab="dashboard">Profil</button>
-    <button data-tab="training">Musculation</button>
-    <button data-tab="nutrition">Nutrition</button>
-  </nav>
-
-  <main>
-    <!-- PROFIL -->
-    <section id="dashboard" class="tab active">
-      <h2>Profil utilisateur</h2>
-      <div class="form">
-        <label>Âge <input type="number" id="age"></label>
-        <label>Taille (cm) <input type="number" id="taille"></label>
-        <label>Poids (kg) <input type="number" id="poids"></label>
-        <button id="saveProfile">Enregistrer</button>
-      </div>
-      <div id="profileSummary"></div>
-    </section>
-
-    <!-- MUSCULATION -->
-    <section id="training" class="tab">
-  <h2>Base d'exercices</h2>
-  <p>Sélection d'exercices de musculation avec leur objectif principal.</p>
-  <ul id="exerciseList" class="list"></ul>
-</section>
-
-    <!-- NUTRITION -->
-    <section id="nutrition" class="tab">
-      <h2>Aliments</h2>
-      <ul id="foodList"></ul>
-    </section>
-  </main>
-
-  <script>
-// === Onglets ===
+<header>
+  <h1>Suivi nutritif & musculaire</h1>
+</header>
+<nav class="tabs">
+  <button data-tab="dashboard">Profil</button>
+  <button data-tab="training">Musculation</button>
+  <button data-tab="nutrition">Nutrition</button>
+</nav>
+<main>
+  <section id="dashboard" class="tab active">
+    <h2>Profil utilisateur</h2>
+    <div class="form">
+      <label>Âge <input type="number" id="age"></label>
+      <label>Taille (cm) <input type="number" id="taille"></label>
+      <label>Poids (kg) <input type="number" id="poids"></label>
+      <button id="saveProfile">Enregistrer</button>
+    </div>
+    <div id="profileSummary"></div>
+  </section>
+  <section id="training" class="tab">
+    <h2>Base d'exercices</h2>
+    <div class="filter">
+      <select id="filterMuscle"><option value="all">Tous les muscles</option></select>
+      <select id="filterGoal"><option value="all">Tous les objectifs</option></select>
+    </div>
+    <ul id="exerciseList" class="list"></ul>
+    <div id="exerciseDetail"></div>
+  </section>
+  <section id="nutrition" class="tab">
+    <h2>Aliments</h2>
+    <ul id="foodList" class="list"></ul>
+  </section>
+</main>
+<script>
+// Onglets
 document.querySelectorAll('.tabs button').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -183,12 +75,11 @@ document.querySelectorAll('.tabs button').forEach(btn => {
   });
 });
 
-// === Profil utilisateur ===
+// Profil utilisateur
 const ageInput = document.getElementById('age');
 const tailleInput = document.getElementById('taille');
 const poidsInput = document.getElementById('poids');
 const summary = document.getElementById('profileSummary');
-
 function loadProfile() {
   const data = JSON.parse(localStorage.getItem('profile'));
   if (!data) return;
@@ -197,28 +88,17 @@ function loadProfile() {
   poidsInput.value = data.poids;
   renderProfile(data);
 }
-
 function renderProfile(data) {
-  summary.innerHTML = `
-    <p>Âge : <strong>${data.age}</strong> ans</p>
-    <p>Taille : <strong>${data.taille}</strong> cm</p>
-    <p>Poids : <strong>${data.poids}</strong> kg</p>
-  `;
+  summary.innerHTML = `<p>Âge : <strong>${data.age}</strong> ans</p><p>Taille : <strong>${data.taille}</strong> cm</p><p>Poids : <strong>${data.poids}</strong> kg</p>`;
 }
-
 document.getElementById('saveProfile').addEventListener('click', () => {
-  const profile = {
-    age: ageInput.value,
-    taille: tailleInput.value,
-    poids: poidsInput.value
-  };
+  const profile = { age: ageInput.value, taille: tailleInput.value, poids: poidsInput.value };
   localStorage.setItem('profile', JSON.stringify(profile));
   renderProfile(profile);
 });
-
 loadProfile();
 
-// === MUSCULATION : BASE D'EXERCICES ===
+// Musculation
 const exercises = [
   { name: 'Développé couché', muscle: 'Pectoraux', goal: 'Force / Hypertrophie' },
   { name: 'Squat', muscle: 'Jambes', goal: 'Force globale' },
@@ -227,20 +107,38 @@ const exercises = [
   { name: 'Développé militaire', muscle: 'Épaules', goal: 'Force' },
   { name: 'Curl biceps', muscle: 'Biceps', goal: 'Isolation' }
 ];
-
 const exerciseList = document.getElementById('exerciseList');
+const filterMuscle = document.getElementById('filterMuscle');
+const filterGoal = document.getElementById('filterGoal');
+const exerciseDetail = document.getElementById('exerciseDetail');
+
+// Remplir les filtres automatiquement
+const muscles = [...new Set(exercises.map(e => e.muscle))];
+muscles.forEach(m => filterMuscle.innerHTML += `<option value='${m}'>${m}</option>`);
+const goals = [...new Set(exercises.map(e => e.goal))];
+goals.forEach(g => filterGoal.innerHTML += `<option value='${g}'>${g}</option>`);
 
 function renderExercises() {
   exerciseList.innerHTML = '';
-  exercises.forEach(exo => {
-    const li = document.createElement('li');
-    li.innerHTML = `<strong>${exo.name}</strong><br>
-      <small>${exo.muscle} — ${exo.goal}</small>`;
-    li.classList.add('card');
-    exerciseList.appendChild(li);
-  });
+  const selectedMuscle = filterMuscle.value;
+  const selectedGoal = filterGoal.value;
+  exercises.filter(exo => (selectedMuscle==='all'||exo.muscle===selectedMuscle) && (selectedGoal==='all'||exo.goal===selectedGoal))
+           .forEach(exo => {
+             const li = document.createElement('li');
+             li.innerHTML = `<strong>${exo.name}</strong><br><small>${exo.muscle} — ${exo.goal}</small>`;
+             li.classList.add('card');
+             li.addEventListener('click', () => showExerciseDetail(exo));
+             exerciseList.appendChild(li);
+           });
 }
 
+function showExerciseDetail(exo) {
+  exerciseDetail.style.display = 'block';
+  exerciseDetail.innerHTML = `<h3>${exo.name}</h3><p><strong>Muscle :</strong> ${exo.muscle}</p><p><strong>Objectif :</strong> ${exo.goal}</p><p>Description : Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>`;
+}
+
+filterMuscle.addEventListener('change', renderExercises);
+filterGoal.addEventListener('change', renderExercises);
 renderExercises();
 </script>
 </body>

@@ -129,9 +129,10 @@ button#saveProfile:hover {
 
     <!-- MUSCULATION -->
     <section id="training" class="tab">
-      <h2>Exercices</h2>
-      <ul id="exerciseList"></ul>
-    </section>
+  <h2>Base d'exercices</h2>
+  <p>Sélection d'exercices de musculation avec leur objectif principal.</p>
+  <ul id="exerciseList" class="list"></ul>
+</section>
 
     <!-- NUTRITION -->
     <section id="nutrition" class="tab">
@@ -183,6 +184,31 @@ document.getElementById('saveProfile').addEventListener('click', () => {
 });
 
 loadProfile();
+
+// === MUSCULATION : BASE D'EXERCICES ===
+const exercises = [
+  { name: 'Développé couché', muscle: 'Pectoraux', goal: 'Force / Hypertrophie' },
+  { name: 'Squat', muscle: 'Jambes', goal: 'Force globale' },
+  { name: 'Soulevé de terre', muscle: 'Dos / Jambes', goal: 'Force' },
+  { name: 'Tractions', muscle: 'Dos', goal: 'Hypertrophie' },
+  { name: 'Développé militaire', muscle: 'Épaules', goal: 'Force' },
+  { name: 'Curl biceps', muscle: 'Biceps', goal: 'Isolation' }
+];
+
+const exerciseList = document.getElementById('exerciseList');
+
+function renderExercises() {
+  exerciseList.innerHTML = '';
+  exercises.forEach(exo => {
+    const li = document.createElement('li');
+    li.innerHTML = `<strong>${exo.name}</strong><br>
+      <small>${exo.muscle} — ${exo.goal}</small>`;
+    li.classList.add('card');
+    exerciseList.appendChild(li);
+  });
+}
+
+renderExercises();
 </script>
 </body>
 </html>

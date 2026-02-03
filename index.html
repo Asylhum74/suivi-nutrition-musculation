@@ -135,6 +135,10 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 <script type="module">
   // Importer THREE depuis le module
   import * as THREE from './three.module.js';
+
+// -------------------- Initialisation --------------------
+let bodyScene, bodyCamera, bodyRenderer, bodyMesh;
+  
 // -------------------- Onglets --------------------
 document.querySelectorAll('.tabs button').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -342,7 +346,6 @@ function renderMealSummary(){
 filterType.addEventListener('change', renderFoods);
 renderFoods();
 // -------------------- 3D Profil --------------------
-let bodyScene, bodyCamera, bodyRenderer, bodyMesh;
 function renderBody3D(profile){
   const canvas = document.getElementById('body3DCanvas');
   canvas.width = canvas.clientWidth;

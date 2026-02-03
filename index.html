@@ -126,6 +126,21 @@ muscles.forEach(m=>filterMuscle.innerHTML+=`<option value='${m}'>${m}</option>`)
 const goals=[...new Set(exercises.map(e=>e.goal))];
 goals.forEach(g=>filterGoal.innerHTML+=`<option value='${g}'>${g}</option>`);
 let selectedProgram=[];
+
+// Charger le programme sauvegardé au démarrage
+function loadProgram() {
+const saved=JSON.parse(localStorage.getItem('myProgram'));
+if(!saved) return;
+selectedProgram=saved;
+programList.innerHTML='';
+selectedProgram.forEach(name=>{
+const li=document.createElement('li');
+li.textContent=name;
+programList.appendChild(li);
+});
+}
+loadProgram();
+
 function renderExercises(){
 exerciseList.innerHTML='';
 const selectedMuscle=filterMuscle.value;

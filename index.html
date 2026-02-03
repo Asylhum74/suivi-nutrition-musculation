@@ -340,6 +340,7 @@ function renderMealSummary(){
 
 filterType.addEventListener('change', renderFoods);
 renderFoods();
+  
 const canvas = document.getElementById('body3DCanvas');
 
 // taille réelle
@@ -408,7 +409,7 @@ function renderExercise3D(name){
   let angle=0;
   function animate(){ requestAnimationFrame(animate); cube.rotation.x=Math.sin(angle); cube.rotation.y=angle; angle+=0.02; renderer.render(scene,camera); }
   animate();
-}
+}*/
 </script>
 </body>
 </html>

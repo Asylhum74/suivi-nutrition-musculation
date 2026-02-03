@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Suivi nutritif & musculaire</title>
 <style>
-/* --- Styles identiques à ton précédent setup --- */
+/* Styles généraux */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
 body { background: #f4f6f8; color: #333; }
 header { background: #1e293b; color: white; padding: 20px; text-align: center; }
@@ -59,6 +59,7 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 <button data-tab="nutrition">Nutrition</button>
 </nav>
 <main>
+<!-- Profil -->
 <section id="dashboard" class="tab active">
 <h2>Profil utilisateur</h2>
 <div class="form">
@@ -70,6 +71,7 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 <div id="profileSummary"></div>
 </section>
 
+<!-- Musculation -->
 <section id="training" class="tab">
 <div class="training-subtabs">
 <button data-subtab="exercises" class="active">Exercices</button>
@@ -89,7 +91,6 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 <div class="exercise-detail-panel" id="exerciseDetailPanel">
 <h3>Détails de l'exercice</h3>
 <p>Cliquez sur un exercice pour voir ses détails ici.</p>
-<div id="exercise3D" style="width:100%; height:300px;"></div>
 </div>
 </div>
 </div>
@@ -103,17 +104,14 @@ button.addProgram:hover, #saveProgram:hover { background: #059669; }
 </div>
 </section>
 
+<!-- Nutrition -->
 <section id="nutrition" class="tab">
 <h2>Aliments</h2>
 <ul id="foodList" class="list"></ul>
 </section>
 
-<!-- ES Modules Three.js -->
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
-
-// --- Onglets principaux ---
+<script>
+// Onglets principaux
 document.querySelectorAll('.tabs button').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -121,7 +119,7 @@ document.querySelectorAll('.tabs button').forEach(btn => {
   });
 });
 
-// --- Sous-onglets Musculation ---
+// Sous-onglets Musculation
 const subtabButtons = document.querySelectorAll('.training-subtabs button');
 subtabButtons.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -133,11 +131,12 @@ subtabButtons.forEach(btn => {
   });
 });
 
-// --- Profil ---
+// Profil
 const ageInput = document.getElementById('age');
 const tailleInput = document.getElementById('taille');
 const poidsInput = document.getElementById('poids');
 const summary = document.getElementById('profileSummary');
+
 function loadProfile() {
   const data = JSON.parse(localStorage.getItem('profile'));
   if (!data) return;
@@ -146,18 +145,22 @@ function loadProfile() {
   poidsInput.value = data.poids;
   renderProfile(data);
 }
+
 function renderProfile(data) {
-  summary.innerHTML=`<p>Âge : <strong>${data.age}</strong> ans</p><p>Taille : <strong>${data.taille}</strong> cm</p><p>Poids : <strong>${data.poids}</strong> kg</p>`;
+  summary.innerHTML = `<p>Âge : <strong>${data.age}</strong> ans</p>
+                       <p>Taille : <strong>${data.taille}</strong> cm</p>
+                       <p>Poids : <strong>${data.poids}</strong> kg</p>`;
 }
-document.getElementById('saveProfile').addEventListener('click',()=>{
-  const profile={age:ageInput.value,taille:tailleInput.value,poids:poidsInput.value};
-  localStorage.setItem('profile',JSON.stringify(profile));
+
+document.getElementById('saveProfile').addEventListener('click', () => {
+  const profile = {age: ageInput.value, taille: tailleInput.value, poids: poidsInput.value};
+  localStorage.setItem('profile', JSON.stringify(profile));
   renderProfile(profile);
 });
 loadProfile();
 
-// --- Exercices ---
-const exercises=[
+// Exercices
+const exercises = [
   {name:'Développé couché',muscle:'Pectoraux',goal:'Force / Hypertrophie',desc:'Allongez-vous sur le banc, prenez la barre, abaissez-la lentement sur votre poitrine et poussez.'},
   {name:'Squat',muscle:'Jambes',goal:'Force globale',desc:'Tenez la barre sur vos épaules, fléchissez les genoux jusqu’à 90°, puis remontez.'},
   {name:'Soulevé de terre',muscle:'Dos / Jambes',goal:'Force',desc:'Pieds à largeur d’épaules, saisissez la barre, dos droit, remontez en extension complète.'},
@@ -166,30 +169,31 @@ const exercises=[
   {name:'Curl biceps',muscle:'Biceps',goal:'Isolation',desc:'Tenez les haltères, fléchissez les coudes et contractez les biceps.'}
 ];
 
-const exerciseList=document.getElementById('exerciseList');
-const filterMuscle=document.getElementById('filterMuscle');
-const filterGoal=document.getElementById('filterGoal');
-const exerciseDetailPanel=document.getElementById('exerciseDetailPanel');
-const programList=document.getElementById('programList');
-const saveProgram=document.getElementById('saveProgram');
+const exerciseList = document.getElementById('exerciseList');
+const filterMuscle = document.getElementById('filterMuscle');
+const filterGoal = document.getElementById('filterGoal');
+const exerciseDetailPanel = document.getElementById('exerciseDetailPanel');
+const programList = document.getElementById('programList');
+const saveProgram = document.getElementById('saveProgram');
 
-const muscles=[...new Set(exercises.map(e=>e.muscle))];
-muscles.forEach(m=>filterMuscle.innerHTML+=`<option value='${m}'>${m}</option>`);
-const goals=[...new Set(exercises.map(e=>e.goal))];
-goals.forEach(g=>filterGoal.innerHTML+=`<option value='${g}'>${g}</option>`);
+const muscles = [...new Set(exercises.map(e=>e.muscle))];
+muscles.forEach(m => filterMuscle.innerHTML += `<option value="${m}">${m}</option>`);
+const goals = [...new Set(exercises.map(e=>e.goal))];
+goals.forEach(g => filterGoal.innerHTML += `<option value="${g}">${g}</option>`);
 
-let selectedProgram=[];
+let selectedProgram = [];
+
 function loadProgram() {
-  const saved=JSON.parse(localStorage.getItem('myProgram'));
-  if(!saved) return;
-  selectedProgram=saved;
-  programList.innerHTML='';
-  selectedProgram.forEach(item=>{
-    const li=document.createElement('li');
+  const saved = JSON.parse(localStorage.getItem('myProgram'));
+  if (!saved) return;
+  selectedProgram = saved;
+  programList.innerHTML = '';
+  selectedProgram.forEach(item => {
+    const li = document.createElement('li');
     li.classList.add('program-item');
-    li.innerHTML=`<span>${item.name}</span> Séries: <input type='number' value='${item.sets}'> Reps: <input type='number' value='${item.reps}'><button class='removeExo'>Supprimer</button>`;
-    li.querySelector('.removeExo').addEventListener('click',()=>{
-      selectedProgram=selectedProgram.filter(e=>e!==item);
+    li.innerHTML = `<span>${item.name}</span> Séries: <input type="number" value="${item.sets}"> Reps: <input type="number" value="${item.reps}"><button class="removeExo">Supprimer</button>`;
+    li.querySelector('.removeExo').addEventListener('click', () => {
+      selectedProgram = selectedProgram.filter(e => e !== item);
       li.remove();
     });
     programList.appendChild(li);
@@ -197,102 +201,57 @@ function loadProgram() {
 }
 loadProgram();
 
-function renderExercises(){
-  exerciseList.innerHTML='';
-  const selectedMuscle=filterMuscle.value;
-  const selectedGoal=filterGoal.value;
-  exercises.filter(exo=>(selectedMuscle==='all'||exo.muscle===selectedMuscle)&&(selectedGoal==='all'||exo.goal===selectedGoal)).forEach(exo=>{
-    const li=document.createElement('li');
+function renderExercises() {
+  exerciseList.innerHTML = '';
+  const selMuscle = filterMuscle.value;
+  const selGoal = filterGoal.value;
+  exercises.filter(e => (selMuscle==='all'||e.muscle===selMuscle) && (selGoal==='all'||e.goal===selGoal))
+           .forEach(exo => {
+    const li = document.createElement('li');
     li.classList.add('card');
-    li.innerHTML=`<strong>${exo.name}</strong><br><small>${exo.muscle} — ${exo.goal}</small>`;
-    li.addEventListener('click',()=>{ showExerciseDetail(exo); });
+    li.innerHTML = `<strong>${exo.name}</strong><br><small>${exo.muscle} — ${exo.goal}</small>`;
+    li.addEventListener('click', ()=>showExerciseDetail(exo));
     exerciseList.appendChild(li);
   });
 }
 
-function showExerciseDetail(exo){
+function showExerciseDetail(exo) {
   exerciseDetailPanel.innerHTML = `
     <h3>${exo.name}</h3>
-    <div id="exercise3D" style="width:100%; height:300px;"></div>
     <p><strong>Muscle :</strong> ${exo.muscle}</p>
     <p><strong>Objectif :</strong> ${exo.goal}</p>
     <p>${exo.desc}</p>
-    <button class='addProgram'>Ajouter au programme</button>
+    <button class="addProgram">Ajouter au programme</button>
   `;
-  exerciseDetailPanel.querySelector('.addProgram').addEventListener('click', ()=> addToProgram(exo.name));
-  init3DModel();
+  exerciseDetailPanel.querySelector('.addProgram').addEventListener('click', ()=>addToProgram(exo.name));
 }
 
-function addToProgram(name){
-  if(!selectedProgram.find(e=>e.name===name)){
+function addToProgram(name) {
+  if (!selectedProgram.find(e=>e.name===name)) {
     selectedProgram.push({name, sets:3, reps:10});
-    const li=document.createElement('li');
+    const li = document.createElement('li');
     li.classList.add('program-item');
-    li.innerHTML=`<span>${name}</span> Séries: <input type='number' value='3'> Reps: <input type='number' value='10'><button class='removeExo'>Supprimer</button>`;
-    li.querySelector('.removeExo').addEventListener('click',()=>{
-      selectedProgram=selectedProgram.filter(e=>e.name!==name);
+    li.innerHTML = `<span>${name}</span> Séries: <input type="number" value="3"> Reps: <input type="number" value="10"><button class="removeExo">Supprimer</button>`;
+    li.querySelector('.removeExo').addEventListener('click', ()=>{
+      selectedProgram = selectedProgram.filter(e=>e.name!==name);
       li.remove();
     });
     programList.appendChild(li);
   }
 }
 
-saveProgram.addEventListener('click',()=>{
+saveProgram.addEventListener('click', ()=>{
   document.querySelectorAll('#programList li').forEach((li,i)=>{
-    selectedProgram[i].sets=parseInt(li.querySelectorAll('input')[0].value);
-    selectedProgram[i].reps=parseInt(li.querySelectorAll('input')[1].value);
+    selectedProgram[i].sets = parseInt(li.querySelectorAll('input')[0].value);
+    selectedProgram[i].reps = parseInt(li.querySelectorAll('input')[1].value);
   });
-  localStorage.setItem('myProgram',JSON.stringify(selectedProgram));
+  localStorage.setItem('myProgram', JSON.stringify(selectedProgram));
   alert('Programme sauvegardé !');
 });
 
-filterMuscle.addEventListener('change',renderExercises);
-filterGoal.addEventListener('change',renderExercises);
+filterMuscle.addEventListener('change', renderExercises);
+filterGoal.addEventListener('change', renderExercises);
 renderExercises();
-
-// --- Three.js 3D Model ---
-function init3DModel(){
-  const container = document.getElementById('exercise3D');
-  container.innerHTML = '';
-
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf4f6f8);
-
-  const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-  camera.position.set(3,3,5);
-
-  const renderer = new THREE.WebGLRenderer({antialias:true});
-  renderer.setSize(container.clientWidth, container.clientHeight);
-  container.appendChild(renderer.domElement);
-
-  const geometry = new THREE.BoxGeometry(1,1,1);
-  const material = new THREE.MeshStandardMaterial({color:0x2563eb});
-  const cube = new THREE.Mesh(geometry, material);
-  scene.add(cube);
-
-  const ambientLight = new THREE.AmbientLight(0xffffff,0.7);
-  scene.add(ambientLight);
-  const dirLight = new THREE.DirectionalLight(0xffffff,0.5);
-  dirLight.position.set(5,10,7.5);
-  scene.add(dirLight);
-
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-
-  function animate(){
-    requestAnimationFrame(animate);
-    cube.rotation.y += 0.01;
-    controls.update();
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  window.addEventListener('resize', ()=>{
-    camera.aspect = container.clientWidth / container.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
-  });
-}
 </script>
 </body>
 </html>

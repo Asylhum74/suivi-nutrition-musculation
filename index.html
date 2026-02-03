@@ -246,8 +246,11 @@ function showExerciseDetail(exo){
     <p><strong>Objectif :</strong> ${exo.goal}</p>
     <p>${exo.desc}</p>
     <button class='addProgram'>Ajouter au programme</button>
+    <canvas id="exercise3DCanvas" style="height:300px;"><
   `;
   exerciseDetailPanel.querySelector('.addProgram').addEventListener('click', ()=> addToProgram(exo.name));
+/canvas>
+  renderExercise3D(exo.name);
 }
 
 function addToProgram(name){

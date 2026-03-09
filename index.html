@@ -4,404 +4,149 @@
 <meta charset="UTF-8">
 <title>Suivi nutritif & musculaire 3D</title>
 <style>
-/* Styles identiques au code précédent */
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-body { background: #f4f6f8; color: #333; }
-header { background: #1e293b; color: white; padding: 20px; text-align: center; }
-.tabs { display: flex; justify-content: center; background: #0f172a; }
-.tabs button { flex: 1; padding: 15px; border: none; background: transparent; color: #cbd5f5; cursor: pointer; font-size: 16px; }
-.tabs button:hover { background: #1e293b; }
-main { max-width: 1200px; margin: 30px auto; padding: 20px; }
-.tab { display: none; }
-.tab.active { display: block; }
-h2 { margin-bottom: 20px; color: #1e293b; }
-.form { display: grid; gap: 15px; max-width: 400px; }
-label { display: flex; justify-content: space-between; align-items: center; }
-input { width: 120px; padding: 6px; }
-button#saveProfile { padding: 10px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; }
-button#saveProfile:hover { background: #1d4ed8; }
-#profileSummary { margin-top: 25px; background: #f1f5f9; padding: 15px; border-radius: 8px; }
-canvas { width: 100%; height: 400px; display: block; margin-top: 15px; border-radius: 8px; background: #e5e7eb; }
+body {
+  margin: 0;
+  font-family: system-ui;
+  background: #f4f6f9;
+}
 
-/* -------------------- Musculation -------------------- */
-.training-subtabs { display: flex; gap: 10px; margin-bottom: 15px; }
-.training-subtabs button { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; background: #cbd5f5; color: #0f172a; }
-.training-subtabs button.active { background: #2563eb; color: white; }
-.subtab { display: none; }
-.subtab.active { display: block; }
+.nav {
+  background: white;
+  padding: 15px;
+  display: flex;
+  gap: 10px;
+  border-bottom: 1px solid #ddd;
+}
 
-.training-container { display: flex; gap: 20px; }
-.exercises-panel, .exercise-detail-panel { background: white; border-radius: 10px; padding: 15px; flex: 1; max-height: 600px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,0.08); }
-.exercises-panel h3, .exercise-detail-panel h3 { margin-bottom: 15px; color: #1e293b; }
-.list { list-style: none; padding-left: 0; display: flex; flex-direction: column; gap: 12px; }
-.card { padding: 12px; border-radius: 8px; background: #f8fafc; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.06); transition: background 0.2s; }
-.card:hover { background: #e0f2fe; }
+.nav button {
+  padding: 8px 15px;
+  border: none;
+  background: #e5e7eb;
+  cursor: pointer;
+  border-radius: 6px;
+}
 
-.program-panel { background: white; border-radius: 10px; padding: 15px; max-height: 600px; overflow-y: auto; box-shadow: 0 8px 16px rgba(0,0,0,0.08); }
-.program-panel h3 { margin-bottom: 15px; color: #1e293b; }
-.program-item { display: flex; flex-direction: column; gap: 6px; background: #f1f5f9; padding: 10px; border-radius: 8px; }
-.program-item span { font-weight: bold; }
-.program-item input { width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #cbd5f5; }
-.program-item button.removeExo { padding: 4px 8px; background: #ef4444; color: white; border: none; border-radius: 4px; cursor: pointer; }
-.program-item button.removeExo:hover { background: #b91c1c; }
-button.addProgram, #saveProgram { margin-top: 10px; padding: 8px 12px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; }
-button.addProgram:hover, #saveProgram:hover { background: #059669; }
+.page {
+  display: none;
+  padding: 20px;
+}
 
-/* -------------------- Nutrition -------------------- */
-.food-panel, .meal-panel { background: white; border-radius: 10px; padding: 15px; max-height:600px; overflow-y:auto; box-shadow:0 8px 16px rgba(0,0,0,0.08); }
-.food-panel h3, .meal-panel h3 { margin-bottom: 15px; color: #1e293b; }
+.page.active {
+  display: block;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+}
+
+.primary {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
 </style>
 </head>
+  
 <body>
-<header>
-<h1>Suivi nutritif & musculaire</h1>
-</header>
-
-<nav class="tabs">
-<button data-tab="dashboard">Profil</button>
-<button data-tab="training">Musculation</button>
-<button data-tab="nutrition">Nutrition</button>
+<nav class="nav">
+  <button onclick="showPage('home')">Accueil</button>
+  <button onclick="showPage('exercises')">Exercices</button>
+  <button onclick="showPage('programs')">Programmes</button>
 </nav>
 
 <main>
-<!-- -------------------- Profil -------------------- -->
-<section id="dashboard" class="tab active">
-<h2>Profil utilisateur</h2>
-<div class="form">
-<label>Âge <input type="number" id="age"></label>
-<label>Taille (cm) <input type="number" id="taille"></label>
-<label>Poids (kg) <input type="number" id="poids"></label>
-<button id="saveProfile">Enregistrer</button>
-</div>
-<div id="profileSummary"></div>
-<canvas id="body3DCanvas"></canvas>
-</section>
 
-<!-- -------------------- Musculation -------------------- -->
-<section id="training" class="tab">
-<div class="training-subtabs">
-<button data-subtab="exercises" class="active">Exercices</button>
-<button data-subtab="program">Programme</button>
-</div>
+  <!-- PAGE ACCUEIL -->
+  <section id="home" class="page active">
+    <h1>Tableau de bord</h1>
 
-<div id="exercisesTab" class="subtab active">
-<div class="training-container">
-<div class="exercises-panel">
-<h3>Liste des exercices</h3>
-<div class="filter">
-<select id="filterMuscle"><option value="all">Tous les muscles</option></select>
-<select id="filterGoal"><option value="all">Tous les objectifs</option></select>
-</div>
-<ul id="exerciseList" class="list"></ul>
-</div>
-<div class="exercise-detail-panel" id="exerciseDetailPanel">
-<h3>Détails de l'exercice</h3>
-<p>Cliquez sur un exercice pour voir ses détails ici.</p>
-<canvas id="exercise3DCanvas" style="margin-top:15px; height:300px;"></canvas>
-</div>
-</div>
-</div>
+    <div class="card">
+      <h3>Informations personnelles</h3>
+      <p>Âge : <span id="age">22</span></p>
+      <p>Taille : <span id="height">180</span> cm</p>
+      <p>Poids : <span id="weight">72</span> kg</p>
+      <p>Objectif : <span id="goal">Prise de masse</span></p>
+    </div>
 
-<div id="programTab" class="subtab">
-<div class="program-panel">
-<h3>Programme en cours</h3>
-<ul id="programList"></ul>
-<button id="saveProgram">Sauvegarder programme</button>
-</div>
-</div>
-</section>
+    <div class="card">
+      <h3>Séances ce mois</h3>
+      <p id="monthlyCount">0</p>
+    </div>
 
-<!-- -------------------- Nutrition -------------------- -->
-<section id="nutrition" class="tab">
-<h2>Nutrition</h2>
-<div class="nutrition-container" style="display:flex; gap:20px;">
-  <div class="food-panel" style="flex:1;">
-    <h3>Aliments</h3>
-    <label>Filtrer par type :
-      <select id="filterType"><option value="all">Tous</option></select>
-    </label>
-    <ul id="foodList" class="list"></ul>
-  </div>
-  <div class="meal-panel" style="flex:1;">
-    <h3>Repas</h3>
-    <ul id="mealList" class="list"></ul>
-    <p><strong>Total nutritionnel :</strong></p>
-    <div id="mealSummary"></div>
-  </div>
-</div>
-</section>
-<!--<script type ="module" src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>-->
+    <div class="card">
+      <h3>Dernier record</h3>
+      <p id="lastPR">Aucun record pour le moment</p>
+    </div>
 
-<script type="module">
-  // Importer THREE depuis le module
-  import * as THREE from './three.module.js';
+    <button onclick="showPage('programs')" class="primary">
+      ➕ Lancer une séance
+    </button>
+  </section>
 
-// -------------------- Initialisation --------------------
-let bodyScene, bodyCamera, bodyRenderer, bodyMesh;
-  
-// -------------------- Onglets --------------------
-document.querySelectorAll('.tabs button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-    document.getElementById(btn.dataset.tab).classList.add('active');
+  <!-- PAGE EXERCICES -->
+  <section id="exercises" class="page">
+    <h1>Bibliothèque d'exercices</h1>
+    <div id="exerciseList"></div>
+  </section>
+
+  <!-- PAGE PROGRAMMES -->
+  <section id="programs" class="page">
+    <h1>Programmes</h1>
+    <div id="programList"></div>
+  </section>
+
+</main>
+
+<script>
+// Navigation
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(page => {
+    page.classList.remove('active');
   });
-});
 
-// -------------------- Sous-onglets Musculation --------------------
-const subtabButtons = document.querySelectorAll('.training-subtabs button');
-subtabButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    subtabButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.subtab').forEach(st => st.classList.remove('active'));
-    document.getElementById(btn.dataset.subtab+'Tab').classList.add('active');
-  });
-});
-
-// -------------------- Profil --------------------
-const ageInput = document.getElementById('age');
-const tailleInput = document.getElementById('taille');
-const poidsInput = document.getElementById('poids');
-const summary = document.getElementById('profileSummary');
-function loadProfile() {
-  const data = JSON.parse(localStorage.getItem('profile'));
-  if (!data) return;
-  ageInput.value = data.age;
-  tailleInput.value = data.taille;
-  poidsInput.value = data.poids;
-  renderProfile(data);
+  document.getElementById(pageId).classList.add('active');
 }
-function renderProfile(data) {
-  summary.innerHTML = `<p>Âge : <strong>${data.age}</strong> ans</p>
-                       <p>Taille : <strong>${data.taille}</strong> cm</p>
-                       <p>Poids : <strong>${data.poids}</strong> kg</p>`;
-renderBody3D(data);
-}
-document.getElementById('saveProfile').addEventListener('click', ()=>{
-  const profile={age:ageInput.value,taille:tailleInput.value,poids:poidsInput.value};
-  localStorage.setItem('profile',JSON.stringify(profile));
-  renderProfile(profile);
-});
-loadProfile();
 
-// -------------------- Musculation --------------------
-const exercises=[
-  {name:'Développé couché',muscle:'Pectoraux',goal:'Force / Hypertrophie',desc:'Allongez-vous sur le banc, prenez la barre, abaissez-la lentement sur votre poitrine et poussez.'},
-  {name:'Squat',muscle:'Jambes',goal:'Force globale',desc:'Tenez la barre sur vos épaules, fléchissez les genoux jusqu’à 90°, puis remontez.'},
-  {name:'Soulevé de terre',muscle:'Dos / Jambes',goal:'Force',desc:'Pieds à largeur d’épaules, saisissez la barre, dos droit, remontez en extension complète.'},
-  {name:'Tractions',muscle:'Dos',goal:'Hypertrophie',desc:'Suspendez-vous à la barre, tirez le menton au-dessus, redescendez lentement.'},
-  {name:'Développé militaire',muscle:'Épaules',goal:'Force',desc:'Debout, barre devant épaules, poussez vers le haut jusqu’à extension complète.'},
-  {name:'Curl biceps',muscle:'Biceps',goal:'Isolation',desc:'Tenez les haltères, fléchissez les coudes et contractez les biceps.'}
+// Données
+let monthlyWorkouts = 0;
+let records = {};
+let programs = [];
+let exercises = [
+  { name: "Squat", muscle: "Jambes", category: "Polyarticulaire" },
+  { name: "Développé couché", muscle: "Pectoraux", category: "Polyarticulaire" },
+  { name: "Curl biceps", muscle: "Biceps", category: "Isolation" }
 ];
 
-const exerciseList=document.getElementById('exerciseList');
-const filterMuscle=document.getElementById('filterMuscle');
-const filterGoal=document.getElementById('filterGoal');
-const exerciseDetailPanel=document.getElementById('exerciseDetailPanel');
-const programList=document.getElementById('programList');
-const saveProgram=document.getElementById('saveProgram');
+// Affichage exercices
+function renderExercises() {
+  const list = document.getElementById("exerciseList");
+  list.innerHTML = "";
 
-const muscles=[...new Set(exercises.map(e=>e.muscle))];
-muscles.forEach(m=>filterMuscle.innerHTML+=`<option value='${m}'>${m}</option>`);
-const goals=[...new Set(exercises.map(e=>e.goal))];
-goals.forEach(g=>filterGoal.innerHTML+=`<option value='${g}'>${g}</option>`);
-
-let selectedProgram=[];
-function loadProgram() {
-  const saved=JSON.parse(localStorage.getItem('myProgram'));
-  if(!saved) return;
-  selectedProgram=saved;
-  programList.innerHTML='';
-  selectedProgram.forEach(item=>{
-    const li=document.createElement('li');
-    li.classList.add('program-item');
-    li.innerHTML=`<span>${item.name}</span> Séries: <input type='number' value='${item.sets}'> Reps: <input type='number' value='${item.reps}'><button class='removeExo'>Supprimer</button>`;
-    li.querySelector('.removeExo').addEventListener('click',()=>{
-      selectedProgram=selectedProgram.filter(e=>e!==item);
-      li.remove();
-    });
-    programList.appendChild(li);
-  });
-}
-loadProgram();
-
-function renderExercises(){
-  exerciseList.innerHTML='';
-  const selMuscle=filterMuscle.value;
-  const selGoal=filterGoal.value;
-  exercises.filter(e=>(selMuscle==='all'||e.muscle===selMuscle)&&(selGoal==='all'||e.goal===selGoal))
-           .forEach(exo=>{
-    const li=document.createElement('li');
-    li.classList.add('card');
-    li.innerHTML=`<strong>${exo.name}</strong><br><small>${exo.muscle} — ${exo.goal}</small>`;
-    li.addEventListener('click',()=>showExerciseDetail(exo));
-    exerciseList.appendChild(li);
+  exercises.forEach(ex => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <h3>${ex.name}</h3>
+      <p>Muscle : ${ex.muscle}</p>
+      <p>Catégorie : ${ex.category}</p>
+      <button onclick="addToProgram('${ex.name}')">Ajouter à un programme</button>
+    `;
+    list.appendChild(div);
   });
 }
 
-function showExerciseDetail(exo){
-  exerciseDetailPanel.innerHTML = `
-    <h3>${exo.name}</h3>
-    <p><strong>Muscle :</strong> ${exo.muscle}</p>
-    <p><strong>Objectif :</strong> ${exo.goal}</p>
-    <p>${exo.desc}</p>
-    <button class='addProgram'>Ajouter au programme</button>
-    <canvas id="exercise3DCanvas" style="height:300px;"></canvas>
-  `;
-  exerciseDetailPanel.querySelector('.addProgram').addEventListener('click', ()=> addToProgram(exo.name));
-
-  renderExercise3D(exo.name);
+function addToProgram(exerciseName) {
+  alert("On ajoutera bientôt : " + exerciseName);
 }
 
-function addToProgram(name){
-  if(!selectedProgram.find(e=>e.name===name)){
-    selectedProgram.push({name, sets:3, reps:10});
-    const li=document.createElement('li');
-    li.classList.add('program-item');
-    li.innerHTML=`<span>${name}</span> Séries: <input type='number' value='3'> Reps: <input type='number' value='10'><button class='removeExo'>Supprimer</button>`;
-    li.querySelector('.removeExo').addEventListener('click',()=>{
-      selectedProgram=selectedProgram.filter(e=>e.name!==name);
-      li.remove();
-    });
-    programList.appendChild(li);
-  }
-}
-
-saveProgram.addEventListener('click',()=>{
-  document.querySelectorAll('#programList li').forEach((li,i)=>{
-    selectedProgram[i].sets=parseInt(li.querySelectorAll('input')[0].value);
-    selectedProgram[i].reps=parseInt(li.querySelectorAll('input')[1].value);
-  });
-  localStorage.setItem('myProgram',JSON.stringify(selectedProgram));
-  alert('Programme sauvegardé !');
-});
-
-filterMuscle.addEventListener('change',renderExercises);
-filterGoal.addEventListener('change',renderExercises);
 renderExercises();
-
-// -------------------- Nutrition --------------------
-const foods=[
-  {name:'Pomme',type:'Fruit',cal:52,prot:0.3,lip:0.2,gluc:14},
-  {name:'Banane',type:'Fruit',cal:89,prot:1.1,lip:0.3,gluc:23},
-  {name:'Poulet',type:'Viande',cal:165,prot:31,lip:3.6,gluc:0},
-  {name:'Saumon',type:'Poisson',cal:208,prot:20,lip:13,gluc:0},
-  {name:'Riz',type:'Féculent',cal:130,prot:2.4,lip:0.3,gluc:28},
-  {name:'Brocoli',type:'Légume',cal:34,prot:2.8,lip:0.4,gluc:7}
-];
-
-const foodList=document.getElementById('foodList');
-const filterType=document.getElementById('filterType');
-const mealList=document.getElementById('mealList');
-const mealSummary=document.getElementById('mealSummary');
-
-const types=[...new Set(foods.map(f=>f.type))];
-types.forEach(t=>filterType.innerHTML+=`<option value="${t}">${t}</option>`);
-
-let currentMeal=[];
-function renderFoods(){
-  foodList.innerHTML='';
-  const typeFilter=filterType.value;
-  foods.filter(f=>typeFilter==='all'||f.type===typeFilter).forEach(f=>{
-    const li=document.createElement('li');
-    li.classList.add('card');
-    li.innerHTML=`<strong>${f.name}</strong> (${f.type}) - ${f.cal} kcal <button class="addFood">Ajouter</button>`;
-    li.querySelector('.addFood').addEventListener('click',()=>addFoodToMeal(f));
-    foodList.appendChild(li);
-  });
-}
-
-function addFoodToMeal(food){
-  const existing=currentMeal.find(f=>f.name===food.name);
-  if(existing){ existing.qty+=100; } else { currentMeal.push({...food, qty:100}); }
-  renderMeal();
-}
-
-function renderMeal(){
-  mealList.innerHTML='';
-  currentMeal.forEach((f,i)=>{
-    const li=document.createElement('li');
-    li.classList.add('program-item');
-    li.innerHTML=`<span>${f.name}</span> Quantité (g): <input type="number" value="${f.qty}"> 
-                  <button class="removeFood">Supprimer</button>`;
-    li.querySelector('input').addEventListener('input', e=>{ f.qty=parseInt(e.target.value); renderMealSummary(); });
-    li.querySelector('.removeFood').addEventListener('click',()=>{ currentMeal.splice(i,1); renderMeal(); });
-    mealList.appendChild(li);
-  });
-  renderMealSummary();
-}
-
-function renderMealSummary(){
-  let totalCal=0,totalProt=0,totalLip=0,totalGluc=0;
-  currentMeal.forEach(f=>{
-    const factor=f.qty/100;
-    totalCal+=f.cal*factor;
-    totalProt+=f.prot*factor;
-    totalLip+=f.lip*factor;
-    totalGluc+=f.gluc*factor;
-  });
-  mealSummary.innerHTML=`<p>Calories: ${totalCal.toFixed(1)} kcal</p>
-                         <p>Protéines: ${totalProt.toFixed(1)} g</p>
-                         <p>Lipides: ${totalLip.toFixed(1)} g</p>
-                         <p>Glucides: ${totalGluc.toFixed(1)} g</p>`;
-}
-
-filterType.addEventListener('change', renderFoods);
-renderFoods();
-// -------------------- 3D Profil --------------------
-function renderBody3D(profile){
-  const canvas = document.getElementById('body3DCanvas');
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
-  bodyScene = new THREE.Scene();
-  bodyCamera = new THREE.PerspectiveCamera(
-    45,
-    canvas.width / canvas.height,
-    0.1,
-    1000
-  );
-  bodyCamera.position.set(0, 1, 6);
-  bodyCamera.lookAt(0, 0, 0);
-  bodyRenderer = new THREE.WebGLRenderer({
-    canvas,
-    antialias: true,
-    alpha: true
-  });
-  bodyRenderer.setSize(canvas.width, canvas.height, false);
-  bodyRenderer.setPixelRatio(window.devicePixelRatio);
-  bodyRenderer.setClearColor(0xffffff, 1);
-  const light = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-  light.position.set(0, 20, 0);
-  bodyScene.add(light);
-  const material = new THREE.MeshStandardMaterial({ color: 0x00aaff });
-  bodyMesh = new THREE.Group();
-  const torso = new THREE.Mesh(new THREE.BoxGeometry(1, 2, 0.5), material);
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.4, 32, 32), material);
-  head.position.y = 1.6;
-  bodyMesh.add(torso, head);
-  bodyScene.add(bodyMesh);
-  function animate(){
-    requestAnimationFrame(animate);
-    bodyMesh.rotation.y += 0.01;
-    bodyRenderer.render(bodyScene, bodyCamera);
-  }
-  animate();
-}
-// -------------------- 3D Exercices --------------------
-function renderExercise3D(name){
-  const canvas = document.getElementById('exercise3DCanvas');
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth/canvas.clientHeight,0.1,1000);
-  const renderer = new THREE.WebGLRenderer({canvas,antialias:true});
-  renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-  const light = new THREE.HemisphereLight(0xffffff,0x444444); light.position.set(0,20,0); scene.add(light);
-  const material = new THREE.MeshStandardMaterial({color:0xff5555});
-  const cube = new THREE.Mesh(new THREE.BoxGeometry(1,1,0.5), material); scene.add(cube);
-  camera.position.z=3;
-  let angle=0;
-  function animate(){ requestAnimationFrame(animate); cube.rotation.x=Math.sin(angle); cube.rotation.y=angle; angle+=0.02; renderer.render(scene,camera); }
-  animate();
-}
 </script>
 </body>
 </html>

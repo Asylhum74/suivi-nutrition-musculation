@@ -99,6 +99,7 @@ body {
   <!-- PAGE PROGRAMMES -->
   <section id="programs" class="page">
     <h1>Programmes</h1>
+    <button onclick="createProgram()" class="primary">➕ Créer un programme</button>
     <div id="programList"></div>
   </section>
 
@@ -114,17 +115,18 @@ function showPage(pageId) {
   document.getElementById(pageId).classList.add('active');
 }
 
-// Données
+// ===== Données =====
 let monthlyWorkouts = 0;
-let records = {};
-let programs = [];
+
 let exercises = [
   { name: "Squat", muscle: "Jambes", category: "Polyarticulaire" },
   { name: "Développé couché", muscle: "Pectoraux", category: "Polyarticulaire" },
   { name: "Curl biceps", muscle: "Biceps", category: "Isolation" }
 ];
 
-// Affichage exercices
+let programs = [];
+
+// ===== AFFICHAGE EXERCICES =====
 function renderExercises() {
   const list = document.getElementById("exerciseList");
   list.innerHTML = "";
@@ -136,17 +138,98 @@ function renderExercises() {
       <h3>${ex.name}</h3>
       <p>Muscle : ${ex.muscle}</p>
       <p>Catégorie : ${ex.category}</p>
-      <button onclick="addToProgram('${ex.name}')">Ajouter à un programme</button>
+      <button onclick="openAddToProgram('${ex.name}')">
+        Ajouter à un programme
+      </button>
     `;
     list.appendChild(div);
   });
 }
 
-function addToProgram(exerciseName) {
-  alert("On ajoutera bientôt : " + exerciseName);
+// ===== CREER PROGRAMME =====
+function createProgram() {
+  const name = prompt("Nom du programme :");
+  if (!name) return;
+
+  programs.push({
+    name: name,
+    exercises: []
+  });
+
+  renderPrograms();
 }
 
+// ===== AJOUTER EXERCICE A PROGRAMME =====
+function openAddToProgram(exerciseName) {
+
+  if (programs.length === 0) {
+    alert("Crée d'abord un programme !");
+    return;
+  }
+
+  const programName = prompt(
+    "Dans quel programme ?\n" +
+    programs.map(p => p.name).join("\n")
+  );
+
+  const program = programs.find(p => p.name === programName);
+  if (!program) return alert("Programme introuvable");
+
+  const sets = parseInt(prompt("Nombre de séries :"));
+  const reps = parseInt(prompt("Nombre de répétitions :"));
+
+  program.exercises.push({
+    name: exerciseName,
+    sets: sets,
+    reps: reps
+  });
+
+  renderPrograms();
+}
+
+// ===== AFFICHAGE PROGRAMMES =====
+function renderPrograms() {
+  const list = document.getElementById("programList");
+  list.innerHTML = "";
+
+  programs.forEach(program => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    let exercisesHTML = "";
+    program.exercises.forEach(ex => {
+      exercisesHTML += `
+        <p>${ex.name} — ${ex.sets}x${ex.reps}</p>
+      `;
+    });
+
+    div.innerHTML = `
+      <h3>${program.name}</h3>
+      ${exercisesHTML || "<p>Aucun exercice</p>"}
+      <button onclick="launchProgram('${program.name}')">
+        ▶ Lancer
+      </button>
+    `;
+
+    list.appendChild(div);
+  });
+}
+
+// ===== LANCER PROGRAMME =====
+function launchProgram(programName) {
+
+  const program = programs.find(p => p.name === programName);
+  if (!program) return;
+
+  alert("Séance terminée !");
+
+  monthlyWorkouts++;
+  document.getElementById("monthlyCount").innerText = monthlyWorkouts;
+}
+
+// Initialisation
 renderExercises();
+renderPrograms();
 </script>
 </body>
 </html>

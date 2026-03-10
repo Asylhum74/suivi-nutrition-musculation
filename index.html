@@ -51,6 +51,45 @@ body {
   border-radius: 8px;
   cursor: pointer;
 }
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-content input,
+.modal-content select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.secondary {
+  background: #e5e7eb;
+}
 </style>
 </head>
   
@@ -167,24 +206,40 @@ function openAddToProgram(exerciseName) {
     return;
   }
 
-  const programName = prompt(
-    "Dans quel programme ?\n" +
-    programs.map(p => p.name).join("\n")
-  );
+  selectedExercise = exerciseName;
+
+  const select = document.getElementById("programSelect");
+  select.innerHTML = "";
+
+  programs.forEach(program => {
+    const option = document.createElement("option");
+    option.value = program.name;
+    option.textContent = program.name;
+    select.appendChild(option);
+  });
+
+  document.getElementById("exerciseModal").classList.add("active");
+}
+function confirmAddExercise() {
+
+  const programName = document.getElementById("programSelect").value;
+  const sets = parseInt(document.getElementById("setsInput").value);
+  const reps = parseInt(document.getElementById("repsInput").value);
 
   const program = programs.find(p => p.name === programName);
-  if (!program) return alert("Programme introuvable");
-
-  const sets = parseInt(prompt("Nombre de séries :"));
-  const reps = parseInt(prompt("Nombre de répétitions :"));
+  if (!program) return;
 
   program.exercises.push({
-    name: exerciseName,
+    name: selectedExercise,
     sets: sets,
     reps: reps
   });
 
   renderPrograms();
+  closeModal();
+}
+function closeModal() {
+  document.getElementById("exerciseModal").classList.remove("active");
 }
 
 // ===== AFFICHAGE PROGRAMMES =====
@@ -231,5 +286,25 @@ function launchProgram(programName) {
 renderExercises();
 renderPrograms();
 </script>
+<!-- MODALE AJOUT EXERCICE -->
+<div id="exerciseModal" class="modal">
+  <div class="modal-content">
+    <h3>Ajouter à un programme</h3>
+
+    <label>Programme :</label>
+    <select id="programSelect"></select>
+
+    <label>Séries :</label>
+    <input type="number" id="setsInput" min="1" value="3">
+
+    <label>Répétitions :</label>
+    <input type="number" id="repsInput" min="1" value="10">
+
+    <div class="modal-buttons">
+      <button onclick="confirmAddExercise()">Ajouter</button>
+      <button onclick="closeModal()" class="secondary">Annuler</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

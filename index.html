@@ -396,8 +396,8 @@ function renderPrograms() {
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span>${ex.name} — ${ex.sets}x${ex.reps}</span>
           <div>
-            <button onclick="editExercise('${program.name}', ${index})">✏</button>
-            <button onclick="deleteExercise('${program.name}', ${index})">🗑</button>
+            <button class="secondary" onclick="editExercise('${program.name}', ${index})">Modifier</button>
+            <button class="secondary" onclick="deleteExercise('${program.name}', ${index})">Supprimier</button>
           </div>
         </div>
       `;
@@ -406,8 +406,8 @@ function renderPrograms() {
     div.innerHTML = `
       <h3>${program.name}</h3>
       ${exercisesHTML || "<p>Aucun exercice</p>"}
-      <button onclick="launchProgram('${program.name}')">
-        ▶ Lancer
+      <button class="secondary" onclick="launchProgram('${program.name}')">
+        Démarrer
       </button>
     `;
 

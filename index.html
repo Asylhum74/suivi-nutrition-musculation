@@ -222,13 +222,13 @@ button {
     </section>
 
     <!-- PAGE EXERCICES -->
-    <section id="exercises" class="page" style="display:none;">
+    <section id="exercises" class="page">
       <h1>Bibliothèque d'exercices</h1>
       <div id="exerciseList"></div>
     </section>
 
     <!-- PAGE PROGRAMMES -->
-    <section id="programs" class="page" style="display:none;">
+    <section id="programs" class="page">
       <h1>Programmes</h1>
       <button onclick="createProgram()" class="primary">➕ Créer un programme</button>
       <div id="programList"></div>
@@ -241,8 +241,6 @@ button {
 // Navigation
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(page => {
-  //document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-  //document.getElementById(pageId).style.display = "block";
     page.classList.remove('active');
   });
 

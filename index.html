@@ -123,6 +123,7 @@ button {
   padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+  min-widht: 100px;
 }
 
 .secondary:hover {
@@ -397,7 +398,7 @@ function renderPrograms() {
           <span>${ex.name} — ${ex.sets}x${ex.reps}</span>
           <div>
             <button class="secondary" onclick="editExercise('${program.name}', ${index})">Modifier</button>
-            <button class="secondary" onclick="deleteExercise('${program.name}', ${index})">Supprimier</button>
+            <button class="secondary" onclick="deleteExercise('${program.name}', ${index})">Supprimer</button>
           </div>
         </div>
       `;

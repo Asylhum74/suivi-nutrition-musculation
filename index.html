@@ -253,7 +253,7 @@ button {
 
         <div class="card">
           <h3>Séances du mois</h3>
-          <canvas id="workoutChart"></canvas>
+          <canvas id="monthlyCount"></canvas>
         </div>
 
         <div class="card">
@@ -521,8 +521,6 @@ function launchProgram(programName) {
   saveData();
 
   document.getElementById("monthlyCount").innerText = monthlyWorkouts;
-
-  showToast("Séance validée 🎉");
 
   renderChart();
 }

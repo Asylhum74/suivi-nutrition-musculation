@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Suivi nutritif & musculaire 3D</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body {
   margin: 0;
@@ -251,8 +252,8 @@ button {
         </div>
 
         <div class="card">
-          <h3>Séances ce mois</h3>
-          <p style="font-size: 28px; font-weight: bold;" id="monthlyCount">0</p>
+          <h3>Séances du mois</h3>
+          <canvas id="workoutChart"></canvas>
         </div>
 
         <div class="card">
@@ -315,17 +316,21 @@ let programs = [];
 function saveData() {
   localStorage.setItem("programs", JSON.stringify(programs));
   localStorage.setItem("monthlyWorkouts", monthlyWorkouts);
+  localStorage.setItem("workoutHistory", JSON.stringify(workoutHistory));
 }
 
 function loadData() {
   const savedPrograms = localStorage.getItem("programs");
   const savedWorkouts = localStorage.getItem("monthlyWorkouts");
+  const savedHistory = localStorage.getItem("workoutHistory");
 
   if (savedPrograms) programs = JSON.parse(savedPrograms);
   if (savedWorkouts) monthlyWorkouts = parseInt(savedWorkouts);
+  if (savedHistory) workoutHistory = JSON.parse(savedHistory);
 
   document.getElementById("monthlyCount").innerText = monthlyWorkouts;
 }
+renderChart()
 
 // ===== AFFICHAGE EXERCICES =====
 function renderExercises() {
@@ -482,20 +487,46 @@ function editExercise(programName, index) {
   saveData();
   renderPrograms();
 }
+let workoutHistory = [];
+
+function renderChart() {
+
+  const ctx = document.getElementById("workoutChart");
+
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: workoutHistory.map((_, i) => "Séance " + (i + 1)),
+      datasets: [{
+        label: 'Séances',
+        data: workoutHistory,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+}
 
 // ===== LANCER PROGRAMME =====
 function launchProgram(programName) {
 
-  const program = programs.find(p => p.name === programName);
-  if (!program) return;
-
-  alert("Séance terminée !");
-
   monthlyWorkouts++;
-  saveData();
-  document.getElementById("monthlyCount").innerText = monthlyWorkouts;
-}
+  workoutHistory.push(1);
 
+  saveData();
+
+  document.getElementById("monthlyCount").innerText = monthlyWorkouts;
+
+  showToast("Séance validée 🎉");
+
+  renderChart();
+}
 // Initialisation
 loadData();
 renderExercises();

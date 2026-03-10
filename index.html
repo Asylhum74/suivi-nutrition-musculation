@@ -177,6 +177,41 @@ button {
 .secondary {
   background: #e5e7eb;
 }
+.program-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.program-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.exercise-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.launch-btn {
+  margin-top: 12px;
+  width: 100%;
+  font-weight: 600;
+}
 </style>
 </head>
   
@@ -388,27 +423,33 @@ function renderPrograms() {
   programs.forEach(program => {
 
     const div = document.createElement("div");
-    div.className = "card";
+    div.className = "card program-card";
 
     let exercisesHTML = "";
 
     program.exercises.forEach((ex, index) => {
       exercisesHTML += `
-        <li style="display:flex; justify-content:space-between; align-items:center; margin:10px;">
+        <div class="exercise-item">
           <span>${ex.name} — ${ex.sets}x${ex.reps}</span>
           <div>
-            <button class="secondary" onclick="editExercise('${program.name}', ${index})">Modifier</button>
-            <button class="secondary" onclick="deleteExercise('${program.name}', ${index})">Supprimer</button>
+            <button onclick="editExercise('${program.name}', ${index})">✏</button>
+            <button onclick="deleteExercise('${program.name}', ${index})">🗑</button>
           </div>
-        </li>
+        </div>
       `;
     });
 
     div.innerHTML = `
-      <h3>${program.name}</h3>
+      <div class="program-header">
+        <h3>${program.name}</h3>
+        <span class="badge">${program.exercises.length} exo</span>
+      </div>
+
       ${exercisesHTML || "<p>Aucun exercice</p>"}
-      <button class="secondary" onclick="launchProgram('${program.name}')">
-        Démarrer
+
+      <button class="primary launch-btn"
+        onclick="launchProgram('${program.name}')">
+        ▶ Lancer la séance
       </button>
     `;
 

@@ -6,8 +6,14 @@
 <style>
 body {
   margin: 0;
-  font-family: system-ui;
-  background: #f4f6f9;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
 }
 
 .nav {
@@ -17,39 +23,103 @@ body {
   gap: 10px;
   border-bottom: 1px solid #ddd;
 }
+/* ===== SIDEBAR ===== */
 
-.nav button {
-  padding: 8px 15px;
+.sidebar {
+  width: 240px;
+  background: #111827;
+  color: white;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sidebar h2 {
+  margin-bottom: 30px;
+}
+
+.nav-btn {
+  background: transparent;
   border: none;
-  background: #e5e7eb;
+  color: #9ca3af;
+  padding: 12px;
+  text-align: left;
+  border-radius: 8px;
   cursor: pointer;
-  border-radius: 6px;
+  transition: 0.2s;
 }
 
-.page {
-  display: none;
-  padding: 20px;
+.nav-btn:hover {
+  background: #1f2937;
+  color: white;
 }
 
-.page.active {
-  display: block;
+.nav-btn.active {
+  background: #2563eb;
+  color: white;
+}
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
 }
 
+/* ===== CONTENT ===== */
+.content {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+}
+/* ===== TITRES ===== */
+h1 {
+  margin-top: 0;
+  margin-bottom: 25px;
+  font-size: 28px;
+}
+/* ===== CARDS ===== */
 .card {
   background: white;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+/* ===== BOUTONS ===== */
+button {
+  font-family: inherit;
 }
 
 .primary {
   background: #2563eb;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.primary:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.secondary {
+  background: #e5e7eb;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.secondary:hover {
+  background: #d1d5db;
 }
 .modal {
   position: fixed;
@@ -103,55 +173,69 @@ body {
 </head>
   
 <body>
-<nav class="nav">
-  <button onclick="showPage('home')">Accueil</button>
-  <button onclick="showPage('exercises')">Exercices</button>
-  <button onclick="showPage('programs')">Programmes</button>
-</nav>
+<div class="app">
+  <aside class="sidebar">
+    <h2>💪 FitTrack</h2>
 
-<main>
-
-  <!-- PAGE ACCUEIL -->
-  <section id="home" class="page active">
-    <h1>Tableau de bord</h1>
-
-    <div class="card">
-      <h3>Informations personnelles</h3>
-      <p>Âge : <span id="age">22</span></p>
-      <p>Taille : <span id="height">180</span> cm</p>
-      <p>Poids : <span id="weight">72</span> kg</p>
-      <p>Objectif : <span id="goal">Prise de masse</span></p>
-    </div>
-
-    <div class="card">
-      <h3>Séances ce mois</h3>
-      <p id="monthlyCount">0</p>
-    </div>
-
-    <div class="card">
-      <h3>Dernier record</h3>
-      <p id="lastPR">Aucun record pour le moment</p>
-    </div>
-
-    <button onclick="showPage('programs')" class="primary">
-      ➕ Lancer une séance
+    <button onclick="showPage('home')" class="nav-btn active">
+      Tableau de bord
     </button>
-  </section>
 
-  <!-- PAGE EXERCICES -->
-  <section id="exercises" class="page">
-    <h1>Bibliothèque d'exercices</h1>
-    <div id="exerciseList"></div>
-  </section>
+    <button onclick="showPage('exercises')" class="nav-btn">
+      Exercices
+    </button>
 
-  <!-- PAGE PROGRAMMES -->
-  <section id="programs" class="page">
-    <h1>Programmes</h1>
-    <button onclick="createProgram()" class="primary">➕ Créer un programme</button>
-    <div id="programList"></div>
-  </section>
+    <button onclick="showPage('programs')" class="nav-btn">
+      Programmes
+    </button>
+  </aside>
 
-</main>
+  <main>
+
+    <!-- PAGE ACCUEIL -->
+    <section id="home" class="page active">
+
+      <h1>Tableau de bord</h1>
+
+      <div class="dashboard-grid">
+
+        <div class="card">
+          <h3>Profil</h3>
+          <p><strong>Âge :</strong> 22 ans</p>
+          <p><strong>Poids :</strong> 72 kg</p>
+          <p><strong>Taille :</strong> 180 cm</p>
+          <p><strong>Objectif :</strong> Prise de masse</p>
+        </div>
+
+        <div class="card">
+          <h3>Séances ce mois</h3>
+          <p style="font-size: 28px; font-weight: bold;" id="monthlyCount">0</p>
+        </div>
+
+        <div class="card">
+          <h3>Dernier record</h3>
+          <p id="lastPR">Aucun record</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- PAGE EXERCICES -->
+    <section id="exercises" class="page">
+      <h1>Bibliothèque d'exercices</h1>
+      <div id="exerciseList"></div>
+    </section>
+
+    <!-- PAGE PROGRAMMES -->
+    <section id="programs" class="page">
+      <h1>Programmes</h1>
+      <button onclick="createProgram()" class="primary">➕ Créer un programme</button>
+      <div id="programList"></div>
+    </section>
+
+  </main>
+</div>
 
 <script>
 // Navigation

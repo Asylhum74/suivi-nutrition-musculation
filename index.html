@@ -394,7 +394,7 @@ function renderPrograms() {
 
     program.exercises.forEach((ex, index) => {
       exercisesHTML += `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px">
           <span>${ex.name} — ${ex.sets}x${ex.reps}</span>
           <div>
             <button class="secondary" onclick="editExercise('${program.name}', ${index})">Modifier</button>

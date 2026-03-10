@@ -55,13 +55,17 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.4);
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
 }
 
 .modal.active {
-  display: flex;
+  opacity: 1;
+  pointer-events: all;
 }
 
 .modal-content {
@@ -72,6 +76,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transform: scale(0.9);
+  transition: transform 0.2s ease;
+}
+.modal.active .modal-content {
+  transform: scale(1);
 }
 
 .modal-content input,
@@ -165,6 +174,21 @@ let exercises = [
 
 let programs = [];
 
+function saveData() {
+  localStorage.setItem("programs", JSON.stringify(programs));
+  localStorage.setItem("monthlyWorkouts", monthlyWorkouts);
+}
+
+function loadData() {
+  const savedPrograms = localStorage.getItem("programs");
+  const savedWorkouts = localStorage.getItem("monthlyWorkouts");
+
+  if (savedPrograms) programs = JSON.parse(savedPrograms);
+  if (savedWorkouts) monthlyWorkouts = parseInt(savedWorkouts);
+
+  document.getElementById("monthlyCount").innerText = monthlyWorkouts;
+}
+
 // ===== AFFICHAGE EXERCICES =====
 function renderExercises() {
   const list = document.getElementById("exerciseList");
@@ -226,6 +250,16 @@ function confirmAddExercise() {
   const sets = parseInt(document.getElementById("setsInput").value);
   const reps = parseInt(document.getElementById("repsInput").value);
 
+  if (!sets || sets < 1) {
+    alert("Nombre de séries invalide");
+    return;
+  }
+
+  if (!reps || reps < 1) {
+    alert("Nombre de répétitions invalide");
+    return;
+  }
+
   const program = programs.find(p => p.name === programName);
   if (!program) return;
 
@@ -235,6 +269,7 @@ function confirmAddExercise() {
     reps: reps
   });
 
+  saveData();
   renderPrograms();
   closeModal();
 }
@@ -248,13 +283,21 @@ function renderPrograms() {
   list.innerHTML = "";
 
   programs.forEach(program => {
+
     const div = document.createElement("div");
     div.className = "card";
 
     let exercisesHTML = "";
-    program.exercises.forEach(ex => {
+
+    program.exercises.forEach((ex, index) => {
       exercisesHTML += `
-        <p>${ex.name} — ${ex.sets}x${ex.reps}</p>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span>${ex.name} — ${ex.sets}x${ex.reps}</span>
+          <div>
+            <button onclick="editExercise('${program.name}', ${index})">✏</button>
+            <button onclick="deleteExercise('${program.name}', ${index})">🗑</button>
+          </div>
+        </div>
       `;
     });
 
@@ -269,6 +312,32 @@ function renderPrograms() {
     list.appendChild(div);
   });
 }
+function deleteExercise(programName, index) {
+  const program = programs.find(p => p.name === programName);
+  if (!program) return;
+
+  program.exercises.splice(index, 1);
+  saveData();
+  renderPrograms();
+}
+function editExercise(programName, index) {
+
+  const program = programs.find(p => p.name === programName);
+  if (!program) return;
+
+  const ex = program.exercises[index];
+
+  const newSets = parseInt(prompt("Nouvelles séries :", ex.sets));
+  const newReps = parseInt(prompt("Nouvelles répétitions :", ex.reps));
+
+  if (!newSets || !newReps) return;
+
+  ex.sets = newSets;
+  ex.reps = newReps;
+
+  saveData();
+  renderPrograms();
+}
 
 // ===== LANCER PROGRAMME =====
 function launchProgram(programName) {
@@ -279,10 +348,12 @@ function launchProgram(programName) {
   alert("Séance terminée !");
 
   monthlyWorkouts++;
+  saveData();
   document.getElementById("monthlyCount").innerText = monthlyWorkouts;
 }
 
 // Initialisation
+loadData();
 renderExercises();
 renderPrograms();
 </script>

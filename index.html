@@ -394,15 +394,13 @@ function renderPrograms() {
 
     program.exercises.forEach((ex, index) => {
       exercisesHTML += `
-        <div style="display:flex; justify-content:space-between; align-items:center; margin:10px;">
-          <li>
+        <li style="display:flex; justify-content:space-between; align-items:center; margin:10px;">
           <span>${ex.name} — ${ex.sets}x${ex.reps}</span>
           <div>
             <button class="secondary" onclick="editExercise('${program.name}', ${index})">Modifier</button>
             <button class="secondary" onclick="deleteExercise('${program.name}', ${index})">Supprimer</button>
           </div>
-          </li>
-        </div>
+        </li>
       `;
     });
 

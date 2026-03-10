@@ -304,6 +304,7 @@ function showPage(pageId) {
 
 // ===== Données =====
 let monthlyWorkouts = 0;
+let workoutHistory = [];
 
 let exercises = [
   { name: "Squat", muscle: "Jambes", category: "Polyarticulaire" },
@@ -486,7 +487,6 @@ function editExercise(programName, index) {
   saveData();
   renderPrograms();
 }
-let workoutHistory = [];
 
 function renderChart() {
 

@@ -237,7 +237,7 @@ button {
     <!-- PAGE PROGRAMMES -->
     <section id="programs" class="page">
       <h1>Programmes</h1>
-      <button onclick="createProgram()" class="primary">➕ Créer un programme</button>
+      <p><button onclick="createProgram()" class="primary">➕ Créer un programme</button></p>
       <div id="programList"></div>
     </section>
 
@@ -303,7 +303,7 @@ function renderExercises() {
       <h3>${ex.name}</h3>
       <p>Muscle : ${ex.muscle}</p>
       <p>Catégorie : ${ex.category}</p>
-      <button onclick="openAddToProgram('${ex.name}')">
+      <button class="secondary" onclick="openAddToProgram('${ex.name}')">
         Ajouter à un programme
       </button>
     `;

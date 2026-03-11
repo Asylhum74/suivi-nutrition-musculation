@@ -562,7 +562,7 @@ function updateMonthlySummary() {
     status.innerText = "✅ Objectif atteint ! Bravo !";
     status.style.color = "green";
   } else {
-    const remaining = monthlyGoal - count;
+    const remaining = profile.monthlyGoal - count;
     status.innerText = "Il te reste " + remaining + " séance" +
       (remaining > 1 ? "s" : "") + " pour atteindre ton objectif !";
   }

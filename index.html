@@ -206,6 +206,7 @@ function saveProfile() {
   profile.goal = document.getElementById("goalInput").value;
   profile.monthlyGoal = parseInt(document.getElementById("monthlyGoalInput").value);
 
+  saveData();
   updateMonthlySummary();
 }
 
@@ -214,21 +215,23 @@ function saveData() {
   localStorage.setItem("programs", JSON.stringify(programs));
   localStorage.setItem("monthlyWorkouts", monthlyWorkouts);
   localStorage.setItem("workoutHistory", JSON.stringify(workoutHistory));
+  localStorage.setItem("profile", JSON.stringify(profile));
 }
 
 function loadData() {
   const savedPrograms = localStorage.getItem("programs");
   const savedWorkouts = localStorage.getItem("monthlyWorkouts");
   const savedHistory = localStorage.getItem("workoutHistory");
+  const savedProfile = localStorage.getItem("profile");
 
   if (savedPrograms) programs = JSON.parse(savedPrograms);
   if (savedWorkouts) monthlyWorkouts = parseInt(savedWorkouts);
   if (savedHistory) workoutHistory = JSON.parse(savedHistory);
+  if (savedProfile) profile = JSON.parse(savedProfile); 
 
   document.getElementById("monthlyCount").innerText = monthlyWorkouts;
 }
 
-  
 // ===== AFFICHAGE EXERCICES =====
 function renderExercises() {
   const list = document.getElementById("exerciseList");
@@ -467,14 +470,15 @@ function launchProgram(programName) {
 
   document.getElementById("monthlyCount").innerText = monthlyWorkouts;
 
+ saveData(); 
  updateMonthlySummary();
  renderChart();
 }
 // Initialisation
 loadData();
+loadProfile();
 renderExercises();
 renderPrograms();
-loadProfile();
 updateMonthlySummary();
 renderChart();
 </script>

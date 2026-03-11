@@ -30,6 +30,7 @@ button {font-family: inherit; }
 .primary:hover {background: #1d4ed8; transform: translateY(-1px); }
 .secondary {background: #e5e7eb; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; min-width: 150px; }
 .secondary:hover {background: #d1d5db;}
+.delete {background: #ef4444; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; min-width: 150px; }
 
 /* ===== ELEMENTS ===== */
 h1 {margin-top: 0; margin-bottom: 25px; font-size: 28px;}
@@ -334,8 +335,8 @@ function renderPrograms() {
         <div class="exercise-item">
           <span>${ex.name} — ${ex.sets}x${ex.reps}</span>
           <div>
-            <button onclick="editExercise('${program.name}', ${index})">✏</button>
-            <button onclick="deleteExercise('${program.name}', ${index})">🗑</button>
+            <button onclick="editExercise('${program.name}', ${index})" class="secondary">✏ Modifier</button>
+            <button onclick="deleteExercise('${program.name}', ${index})" class="delete">🗑 Supprimer</button>
           </div>
         </div>
       `;

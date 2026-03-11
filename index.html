@@ -251,6 +251,11 @@ button {
           <p><strong>Objectif :</strong> Prise de masse</p>
         </div>
 
+        <div class="card" id="monthlySummary">
+          <h2 id="monthlyCountText">0 séance ce mois-ci</h2>
+          <p id="monthlyGoalText">Objectif : 0</p>
+          <p id="goalStatus"></p>
+        </div>
         <div class="card">
           <h3>Séances du mois</h3>
           <canvas id="monthlyCount"></canvas>
@@ -307,6 +312,7 @@ let monthlyWorkouts = 0;
 let workoutHistory = [];
 let monthlyCount = 0;
 let workoutChart = null;
+let monthlyGoal = 20; // objectif modifiable
   
 let exercises = [
   { name: "Squat", muscle: "Jambes", category: "Polyarticulaire" },
@@ -490,6 +496,39 @@ function editExercise(programName, index) {
   renderPrograms();
 }
 
+function getMonthlyCount() {
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  return workoutHistory.filter(date => {
+    const d = new Date(date);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  }).length;
+}
+function updateMonthlySummary() {
+
+  const count = getMonthlyCount();
+
+  document.getElementById("monthlyCountText").innerText =
+    count + " séance" + (count > 1 ? "s" : "") + " ce mois-ci";
+
+  document.getElementById("monthlyGoalText").innerText =
+    "Objectif : " + monthlyGoal + " séances";
+
+  const status = document.getElementById("goalStatus");
+
+  if (count >= monthlyGoal) {
+    status.innerText = "✅ Objectif atteint ! Bravo !";
+    status.style.color = "green";
+  } else {
+    const remaining = monthlyGoal - count;
+    status.innerText = "❌ Il reste " + remaining + " séance" +
+      (remaining > 1 ? "s" : "") + " pour atteindre ton objectif";
+    status.style.color = "red";
+  }
+}
+
 function renderChart() {
 
   const ctx = document.getElementById("monthlyCount").getContext("2d");
@@ -539,12 +578,14 @@ function launchProgram(programName) {
 
   document.getElementById("monthlyCount").innerText = monthlyWorkouts;
 
-  renderChart();
+ updateMonthlySummary();
+ renderChart();
 }
 // Initialisation
 loadData();
 renderExercises();
 renderPrograms();
+updateMonthlySummary();
 renderChart();
 </script>
 <!-- MODALE AJOUT EXERCICE -->

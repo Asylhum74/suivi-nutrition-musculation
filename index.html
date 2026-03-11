@@ -5,221 +5,63 @@
 <title>Suivi nutritif & musculaire 3D</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body {
-  margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  background: #f3f4f6;
-  color: #111827;
-}
+/* ===== PRINCIPALE ===== */
+body {margin: 0; font-family: 'Inter', system-ui, sans-serif;,background: #f3f4f6;,color: #111827;,}
+.app {display: flex;,height: 100vh; }
+.nav {background: white; padding: 15px; display: flex; gap: 10px; border-bottom: 1px solid #ddd; }
 
-.app {
-  display: flex;
-  height: 100vh;
-}
-
-.nav {
-  background: white;
-  padding: 15px;
-  display: flex;
-  gap: 10px;
-  border-bottom: 1px solid #ddd;
-}
 /* ===== SIDEBAR ===== */
+.sidebar {width: 240px; background: #111827; color: white; padding: 30px 20px; display: flex; flex-direction: column; gap: 15px; }
+.sidebar h2 {margin-bottom: 30px; }
 
-.sidebar {
-  width: 240px;
-  background: #111827;
-  color: white;
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
+/* ===== CONTENT ===== */
+.content {flex: 1; padding: 40px; overflow-y: auto; }
+.page {display: none;}
+.page.active {display: block; }
 
-.sidebar h2 {
-  margin-bottom: 30px;
-}
+/* ===== BOUTON NAV ===== */
+.nav-btn {background: transparent; border: none; color: #9ca3af; padding: 12px; text-align: left; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+.nav-btn:hover {background: #1f2937; color: white; }
+.nav-btn.active {background: #2563eb; color: white; }
 
-.nav-btn {
-  background: transparent;
-  border: none;
-  color: #9ca3af;
-  padding: 12px;
-  text-align: left;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
+/* ===== BOUTONS ===== */
+button {font-family: inherit; }
+.primary {background: #2563eb; color: white; border: none; padding: 10px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+.primary:hover {background: #1d4ed8; transform: translateY(-1px); }
+.secondary {background: #e5e7eb; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; min-width: 150px; }
+.secondary:hover {background: #d1d5db;}
 
-.nav-btn:hover {
-  background: #1f2937;
-  color: white;
-}
+/* ===== ELEMENTS ===== */
+h1 {margin-top: 0; margin-bottom: 25px; font-size: 28px;}
+.card {background: white; padding: 20px; border-radius: 14px; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.05); transition: 0.2s; }
+.card:hover {transform: translateY(-3px); }
+input, select {padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
 
-.nav-btn.active {
-  background: #2563eb;
-  color: white;
-}
+/* ===== POPUP ===== */
+.modal {position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease; }
+.modal.active {opacity: 1; pointer-events: all; }
+.modal-content {background: white; padding: 25px; border-radius: 12px; width: 320px; display: flex; flex-direction: column; gap: 10px; transform: scale(0.9);
+  transition: transform 0.2s ease; }
+.modal.active .modal-content {transform: scale(1); }
+.modal-content input,
+.modal-content select {padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
+.modal-buttons {display: flex; justify-content: space-between; margin-top: 10px; }
+
+/* ===== TABLEAU DE BORD ===== */
 .dashboard-grid {
   display: grid;
   grid-template-rows: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
 }
 
-/* ===== CONTENT ===== */
-.content {
-  flex: 1;
-  padding: 40px;
-  overflow-y: auto;
-}
-.page {
-  display: none;
-}
+/* ===== PROGRAMME ===== */
+.program-card {position: relative; overflow: hidden; }
+.program-header {display: flex; justify-content: space-between; align-items: center;}
+.badge {background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.exercise-item {display: flex; justify-content: space-between; align-items: center; background: #f9fafb; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; }
+.launch-btn { margin-top: 12px; width: 100%; font-weight: 600;  }
 
-.page.active {
-  display: block;
-}
-/* ===== TITRES ===== */
-h1 {
-  margin-top: 0;
-  margin-bottom: 25px;
-  font-size: 28px;
-}
-/* ===== CARDS ===== */
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 14px;
-  margin-bottom: 20px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.05);
-  transition: 0.2s;
-}
-
-.card:hover {
-  transform: translateY(-3px);
-}
-/* ===== BOUTONS ===== */
-button {
-  font-family: inherit;
-}
-
-.primary {
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.primary:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-}
-
-.secondary {
-  background: #e5e7eb;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  min-width: 150px;
-}
-
-.secondary:hover {
-  background: #d1d5db;
-}
-
-input, select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-  
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-.modal.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.modal-content {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  width: 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transform: scale(0.9);
-  transition: transform 0.2s ease;
-}
-.modal.active .modal-content {
-  transform: scale(1);
-}
-
-.modal-content input,
-.modal-content select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.secondary {
-  background: #e5e7eb;
-}
-.program-card {
-  position: relative;
-  overflow: hidden;
-}
-
-.program-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.badge {
-  background: #e0f2fe;
-  color: #0369a1;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.exercise-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f9fafb;
-  padding: 8px 12px;
-  border-radius: 8px;
-  margin-bottom: 8px;
-}
-
-.launch-btn {
-  margin-top: 12px;
-  width: 100%;
-  font-weight: 600;
-}
 </style>
 </head>
   
@@ -310,7 +152,7 @@ input, select {
 </div>
 
 <script>
-// ------------------- GESTION BOUTON ----------------
+// ------------------- GESTION BOUTON NAVIGATION ----------------
 const buttons = document.querySelectorAll(".nav-btn");
 
 buttons.forEach(button => {
@@ -320,7 +162,7 @@ buttons.forEach(button => {
 
   });
 });
-// Navigation
+// ------------------- NAVIGATION ----------------
 function showPage(pageId) {
   document.querySelectorAll('.page').forEach(page => {
     page.classList.remove('active');
@@ -330,12 +172,11 @@ function showPage(pageId) {
   document.getElementById(pageId).classList.add('active');
 }
 
-// ===== Données =====
+// ------------------- DONNEES ----------------
 let monthlyWorkouts = 0;
 let workoutHistory = [];
 let monthlyCount = 0;
 let workoutChart = null;
-let monthlyGoal = 20; // objectif modifiable
 let profile = {
   age: "",
   height: "",
@@ -343,15 +184,14 @@ let profile = {
   goal: "",
   monthlyGoal: ""
 };
-  
 let exercises = [
   { name: "Squat", muscle: "Jambes", category: "Polyarticulaire" },
   { name: "Développé couché", muscle: "Pectoraux", category: "Polyarticulaire" },
   { name: "Curl biceps", muscle: "Biceps", category: "Isolation" }
 ];
-
 let programs = [];
-
+  
+// ------------------- SAUVEGARDE PROFILE ----------------
 function loadProfile() {
   document.getElementById("ageInput").value = profile.age;
   document.getElementById("heightInput").value = profile.height;
@@ -368,7 +208,8 @@ function saveProfile() {
 
   updateMonthlySummary();
 }
-  
+
+// ------------------- SAUVEGARDE DONNEES ----------------
 function saveData() {
   localStorage.setItem("programs", JSON.stringify(programs));
   localStorage.setItem("monthlyWorkouts", monthlyWorkouts);
@@ -387,6 +228,7 @@ function loadData() {
   document.getElementById("monthlyCount").innerText = monthlyWorkouts;
 }
 
+  
 // ===== AFFICHAGE EXERCICES =====
 function renderExercises() {
   const list = document.getElementById("exerciseList");

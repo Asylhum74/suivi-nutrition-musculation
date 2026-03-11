@@ -305,7 +305,9 @@ function showPage(pageId) {
 // ===== Données =====
 let monthlyWorkouts = 0;
 let workoutHistory = [];
-
+let monthlyCount = 0;
+let workoutChart = null;
+  
 let exercises = [
   { name: "Squat", muscle: "Jambes", category: "Polyarticulaire" },
   { name: "Développé couché", muscle: "Pectoraux", category: "Polyarticulaire" },
@@ -490,7 +492,7 @@ function editExercise(programName, index) {
 
 function renderChart() {
 
-  const ctx = document.getElementById("workoutChart");
+  const ctx = document.getElementById("monthlyCount");
 
   if (!ctx) return;
 
@@ -516,6 +518,7 @@ function renderChart() {
 function launchProgram(programName) {
 
   monthlyWorkouts++;
+  monthlyCount++;
   workoutHistory.push(1);
 
   saveData();

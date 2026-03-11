@@ -253,7 +253,7 @@ button {
 
         <div class="card">
           <h3>Séances du mois</h3>
-          <canvas id="workoutChart"></canvas>
+          <canvas id="monthlyCount"></canvas>
         </div>
 
         <div class="card">
@@ -492,10 +492,10 @@ function editExercise(programName, index) {
 
 function renderChart() {
 
-  const ctx = document.getElementById("workoutChart").getContext("2d");
+  const ctx = document.getElementById("monthlyCount").getContext("2d");
 
-  if (workoutChart) {
-    workoutChart.destroy();
+  if (monthlyCount) {
+    monthlyCount.destroy();
   }
 
   const now = new Date();
@@ -517,7 +517,7 @@ function renderChart() {
     }
   });
 
-  workoutChart = new Chart(ctx, {
+  monthlyCount = new Chart(ctx, {
     type: "line", // change en "bar" si tu préfères
     data: {
       labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4", "Sem 5"],

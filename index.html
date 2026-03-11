@@ -565,6 +565,7 @@ function updateMonthlySummary() {
     const remaining = profile.monthlyGoal - count;
     status.innerText = "Il te reste " + remaining + " séance" +
       (remaining > 1 ? "s" : "") + " pour atteindre ton objectif !";
+    status.style.color = "black";
   }
 }
 

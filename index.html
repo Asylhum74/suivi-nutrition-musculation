@@ -246,10 +246,26 @@ button {
 
         <div class="card">
           <h3>Profil</h3>
-          <p><strong>Âge :</strong> 22 ans</p>
-          <p><strong>Poids :</strong> 72 kg</p>
-          <p><strong>Taille :</strong> 180 cm</p>
-          <p><strong>Objectif :</strong> Prise de masse</p>
+          <label>Âge</label>
+          <input type="number" id="ageInput">
+
+          <label>Taille (cm)</label>
+          <input type="number" id="heightInput">
+
+          <label>Poids (kg)</label>
+          <input type="number" id="weightInput">
+        
+          <label>Objectif</label>
+          <select id="goalInput">
+            <option>Prise de masse</option>
+            <option>Sèche</option>
+            <option>Perte de poids</option>
+          </select>
+
+          <label>Objectif de séances / mois</label>
+          <input type="number" id="monthlyGoalInput">
+        
+          <button class="btn" onclick="saveProfile()">Enregistrer</button>
         </div>
 
         <div class="card" id="monthlySummary">
@@ -323,6 +339,23 @@ let exercises = [
 
 let programs = [];
 
+function loadProfile() {
+  document.getElementById("ageInput").value = profile.age;
+  document.getElementById("heightInput").value = profile.height;
+  document.getElementById("weightInput").value = profile.weight;
+  document.getElementById("goalInput").value = profile.goal;
+  document.getElementById("monthlyGoalInput").value = profile.monthlyGoal;
+}
+function saveProfile() {
+  profile.age = parseInt(document.getElementById("ageInput").value);
+  profile.height = parseInt(document.getElementById("heightInput").value);
+  profile.weight = parseInt(document.getElementById("weightInput").value);
+  profile.goal = document.getElementById("goalInput").value;
+  profile.monthlyGoal = parseInt(document.getElementById("monthlyGoalInput").value);
+
+  updateMonthlySummary();
+}
+  
 function saveData() {
   localStorage.setItem("programs", JSON.stringify(programs));
   localStorage.setItem("monthlyWorkouts", monthlyWorkouts);
@@ -515,18 +548,17 @@ function updateMonthlySummary() {
     count + " séance" + (count > 1 ? "s" : "") + " ce mois-ci";
 
   document.getElementById("monthlyGoalText").innerText =
-    "Objectif : " + monthlyGoal + " séances";
+    "Objectif : " + profile.monthlyGoal + " séances";
 
   const status = document.getElementById("goalStatus");
 
-  if (count >= monthlyGoal) {
+  if (count >= profile.monthlyGoal) {
     status.innerText = "✅ Objectif atteint ! Bravo !";
     status.style.color = "green";
   } else {
     const remaining = monthlyGoal - count;
-    status.innerText = "❌ Il reste " + remaining + " séance" +
-      (remaining > 1 ? "s" : "") + " pour atteindre ton objectif";
-    status.style.color = "red";
+    status.innerText = "Il te reste " + remaining + " séance" +
+      (remaining > 1 ? "s" : "") + " pour atteindre ton objectif !";
   }
 }
 
@@ -586,6 +618,7 @@ function launchProgram(programName) {
 loadData();
 renderExercises();
 renderPrograms();
+loadProfile();
 updateMonthlySummary();
 renderChart();
 </script>

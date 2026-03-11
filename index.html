@@ -62,7 +62,6 @@ body {
 }
 .dashboard-grid {
   display: grid;
-  /*grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));*/
   grid-template-rows: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
 }
@@ -331,11 +330,11 @@ let monthlyCount = 0;
 let workoutChart = null;
 let monthlyGoal = 20; // objectif modifiable
 let profile = {
-  age: 25,
-  height: 180,
-  weight: 75,
-  goal: "Prise de masse",
-  monthlyGoal: 20
+  age: "",
+  height: "",
+  weight: "",
+  goal: "",
+  monthlyGoal: ""
 };
   
 let exercises = [

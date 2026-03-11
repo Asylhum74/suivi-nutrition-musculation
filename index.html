@@ -400,7 +400,8 @@ function updateMonthlySummary() {
   const count = getMonthlyCount();
 
   document.getElementById("monthlyCountText").innerText =
-    count + " séance" + (count > 1 ? "s" : "") + " ce mois-ci";
+    "Séance" + (count > 1 ? "s" : "") + " ce mois : " + count;
+    //count + " séance" + (count > 1 ? "s" : "") + " ce mois-ci";
 
   document.getElementById("monthlyGoalText").innerText =
     "Objectif : " + profile.monthlyGoal + " séances";

@@ -253,7 +253,7 @@ button {
 
         <div class="card">
           <h3>Séances du mois</h3>
-          <canvas id="monthlyCount"></canvas>
+          <canvas id="workoutChart"></canvas>
         </div>
 
         <div class="card">
@@ -492,24 +492,40 @@ function editExercise(programName, index) {
 
 function renderChart() {
 
-  const ctx = document.getElementById("monthlyCount");
+  const ctx = document.getElementById("workoutChart").getContext("2d");
 
-  if (!ctx) return;
+  if (workoutChart) {
+    workoutChart.destroy();
+  }
 
-  new Chart(ctx, {
-    type: 'bar',
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  // Tableau 4 semaines (modifiable si tu veux 5)
+  let weeklyCount = [0, 0, 0, 0, 0];
+
+  workoutHistory.forEach(date => {
+    const d = new Date(date);
+
+    if (
+      d.getMonth() === currentMonth &&
+      d.getFullYear() === currentYear
+    ) {
+      const weekNumber = Math.floor((d.getDate() - 1) / 7);
+      weeklyCount[weekNumber]++;
+    }
+  });
+
+  workoutChart = new Chart(ctx, {
+    type: "line", // change en "bar" si tu préfères
     data: {
-      labels: workoutHistory.map((_, i) => "Séance " + (i + 1)),
+      labels: ["Sem 1", "Sem 2", "Sem 3", "Sem 4", "Sem 5"],
       datasets: [{
-        label: 'Séances',
-        data: workoutHistory,
+        label: "Séances par semaine",
+        data: weeklyCount,
+        tension: 0.3
       }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      }
     }
   });
 }
@@ -517,9 +533,7 @@ function renderChart() {
 // ===== LANCER PROGRAMME =====
 function launchProgram(programName) {
 
-  monthlyWorkouts++;
-  monthlyCount++;
-  workoutHistory.push(1);
+  workoutHistory.push(new Date());
 
   saveData();
 

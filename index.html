@@ -130,6 +130,13 @@ button {
 .secondary:hover {
   background: #d1d5db;
 }
+
+input, select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+  
 .modal {
   position: fixed;
   inset: 0;
@@ -245,26 +252,26 @@ button {
 
         <div class="card">
           <h3>Profil</h3>
-          <label>Âge</label>
+          <label>Âge :</label>
           <input type="number" id="ageInput">
 
-          <label>Taille (cm)</label>
+          <label>Taille (cm) :</label>
           <input type="number" id="heightInput">
 
-          <label>Poids (kg)</label>
+          <label>Poids (kg) :</label>
           <input type="number" id="weightInput">
         
-          <label>Objectif</label>
+          <label>Objectif :</label>
           <select id="goalInput">
             <option>Prise de masse</option>
             <option>Sèche</option>
             <option>Perte de poids</option>
           </select>
 
-          <label>Objectif de séances / mois</label>
+          <label>Objectif de séances / mois :</label>
           <input type="number" id="monthlyGoalInput">
         
-          <button class="btn" onclick="saveProfile()">Enregistrer</button>
+          <button class="primary" onclick="saveProfile()">Enregistrer</button>
         </div>
 
         <div class="card" id="monthlySummary">
